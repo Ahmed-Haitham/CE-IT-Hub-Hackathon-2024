@@ -36,4 +36,22 @@ git clone https://github.com/Ahmed-Haitham/CE-IT-Hub-Hackathon-2024
 cd CE-IT-Hub-Hackathon-2024
 sudo docker build . -t hackathon-app:v1
 sudo docker run -p 8000:8000 hackathon-app:v1
+=======
+user:hackathon-postgre
+pass:hackathonteam1
 
+
+# NOT NEEDED, only for information: Steps needed to initially setup a docker image (not needed if you want to debug)
+python3 -m venv venv
+
+pip install fastapi
+pip install "uvicorn[standard]"
+
+sudo docker build -t ce_hackathon_team_1 .
+
+sudo docker run -p 8000:8000 ce_hackathon_team_1
+
+
+https://docs.docker.com/compose/install/linux/#install-the-plugin-manually
+
+sudo docker compose up -d
