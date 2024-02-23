@@ -37,3 +37,9 @@ pip install "uvicorn[standard]"
 
 sudo docker build -t ce_hackathon_team_1 .
 
+sudo docker run -p 8000:8000 ce_hackathon_team_1
+
+- sqlalchemy
+- alembic
+
+
