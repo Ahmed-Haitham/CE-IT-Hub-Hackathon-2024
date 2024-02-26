@@ -1,17 +1,14 @@
-#
-FROM python:3.10
+# Dockerfile
 
-#
-WORKDIR /code
+# pull the official docker image
+FROM python:3.12
 
+# set work directory
+WORKDIR /app
 
-COPY requirements.txt ./
-
-#
+# install dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-#
+# copy project
 COPY . .
-
-#
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -3,34 +3,52 @@
 ## Steps on windows to install WSL
 
 run wsl--install on admin terminal
-
+##
 reboot your machine
-
+##
 open ubuntu (executable)
-
+##
 run sudo apt update
 
+## now install p&g certificate on wsl
+enter root terminal (sudo su)
+##
+copy one big command from developerportal (add link)
+##
+paste it into root cmd line
+##
+press enter in the first pink window
+##
+use space key to add pgrootcert, then press enter
+##
+CTRL+D to exit root terminal
+##
+sudo service docker stop
+##
+sudo service docker start
+
+
 ## now install docker:
-sudo apt-get update
-sudo apt-get install ca-certificates curl
-sudo install -m 0755 -d /etc/apt/keyrings
+sudo apt-get update\
+sudo apt-get install ca-certificates curl\
+sudo install -m 0755 -d /etc/apt/keyrings\
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc\
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
+sudo apt-get update\
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo docker run hello-world
+sudo docker run hello-world\
 
 ## now install git and clone repo on wsl
 ### Prerequisite (have git credentials manager set up on windows: https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git)
-sudo-apt-get install git
-git config --global user.name "YOURNAME"
-git config --global user.email "YOURGITHUB EMAIL"
-git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
-git clone https://github.com/Ahmed-Haitham/CE-IT-Hub-Hackathon-2024
+sudo-apt-get install git <br/>
+git config --global user.name "YOURNAME" <br/>
+git config --global user.email "YOURGITHUB EMAIL" <br/>
+git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe" <br/>
+git clone https://github.com/Ahmed-Haitham/CE-IT-Hub-Hackathon-2024 <br/>
 
 ## Now build the docker image
 cd CE-IT-Hub-Hackathon-2024
