@@ -38,7 +38,22 @@ git config --global user.email "YOURGITHUB EMAIL" <br/>
 git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe" <br/>
 git clone https://github.com/Ahmed-Haitham/CE-IT-Hub-Hackathon-2024
 
+## now connect vs code to wsl
+make sure that VS code is added to your windows path (environment variable settings) <br/>
+open your vs code on windows and install the wsl extension <br/>
+from your ubuntu terminal, type: <br/>
+cd /mnt/c <br/>
+code . <br/>
+Likely now you will get errors from VS code. Restarting your computer and opening vs code again should fix it. <br/>
+
 ## Now build the docker images using docker compose
+from your vs code connected to wsl ubuntu, add a .env file in the root directory <br/>
+This file will contain required variables for your database configuration <br/>
+You can paste the following, or change the values <br/>
+PG_INSTANCE=pginstance <br/>
+PG_USER=user <br/>
+PG_PASSWORD=pass <br/>
+DB_EXPOSED_PORT=5432 <br/>
 cd CE-IT-Hub-Hackathon-2024 <br/>
 sudo docker compose up -d --build <br/>
 Now you should have 2 containers running (web and db) <br/>
