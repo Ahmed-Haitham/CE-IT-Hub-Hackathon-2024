@@ -8,7 +8,7 @@ run sudo apt update
 
 ## now install p&g certificate on wsl
 enter root terminal (sudo su) <br/>
-copy one big command from developerportal (add link) <br/>
+copy one big command from developerportal (https://developerportal.pg.com/docs/default/component/devdocs/network/ssl-inspection/Solutions/#option-2-one-big-command) <br/>
 paste it into root cmd line <br/>
 press enter in the first pink window <br/>
 use space key to add pgrootcert, then press enter <br/>
