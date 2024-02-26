@@ -12,14 +12,18 @@ services:
       POSTGRES_DB: ${PG_INSTANCE}
     volumes:
         - pgdata:/var/lib/postgresql/data/
-    expose:
-      - ${DB_EXPOSED_PORT}
+    healthcheck:
+      test: "pg_isready -h db"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   web:
     build: .
-    #Keep this bash command to prevent container start failure while waiting for pg container
-    command: bash -c 'while !</dev/tcp/db/5432; do sleep 5; done; uvicorn app.main:app --host 0.0.0.0'
+   
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     volumes:
       - .:/app
     ports:
