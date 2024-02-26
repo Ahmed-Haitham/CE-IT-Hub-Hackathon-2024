@@ -1,0 +1,31 @@
+#docker-compose.yaml
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    restart: on-failure
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_INSTANCE}
+    volumes:
+        - pgdata:/var/lib/postgresql/data/
+    expose:
+      - ${DB_EXPOSED_PORT}
+  web:
+    build: .
+    #Keep this bash command to prevent container start failure while waiting for pg container
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 5; done; uvicorn app.main:app --host 0.0.0.0'
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_URL=postgresql://${PG_USER}:${PG_PASSWORD}@db:${DB_EXPOSED_PORT}/${PG_INSTANCE}
+
+volumes:
+  pgdata:
