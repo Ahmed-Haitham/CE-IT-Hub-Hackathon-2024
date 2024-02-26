@@ -7,6 +7,7 @@ from .db import Base
 class symmetricityChoices(enum.Enum):
     bilateral = "Bilateral: Both sides of the body are affected"
     unilateral = "Unilateral: Only one side of the body is affected"
+    na = "Not Applicable"
 
 class ProgressionChoices(enum.Enum):
     variable = "Variable: Periods of deterioration and improvement"
@@ -26,11 +27,11 @@ class OnsetChoices(enum.Enum):
 class Symptom(Base):
     __tablename__ = "symptoms"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, default=None, primary_key=True)
     medical_name = Column(String(128), nullable=False)
     description = Column(String(5000))
     is_red_flag = Column(Boolean, default=False)
-    symmetricity = Column(Enum(symmetricityChoices))
+    symmetricity = Column(Enum(symmetricityChoices), default="na")
     progression = Column(Enum(ProgressionChoices))
     age_onset_group = Column(Enum(OnsetChoices))
     media_path = Column(String(128))
@@ -39,11 +40,9 @@ class Symptom(Base):
 class DiseaseGroup(Base):
     __tablename__ = "disease_groups"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, default=None, primary_key=True)
     medical_name = Column(String(128), nullable=False)
     summary_message = Column(String(5000))
-    excluding_symptoms = Column(ARRAY(Integer))
-    required_symptoms = Column(ARRAY(Integer))
 
 #https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#many-to-many
 assoc_symptoms_disease_groups = Table(
@@ -53,3 +52,5 @@ assoc_symptoms_disease_groups = Table(
     Column('symptom_id', Integer, ForeignKey('symptoms.id')),
     Column('disease_group_id', Integer, ForeignKey('disease_groups.id'))
 )
+
+'''add exluding and mandatory symptom association tables'''

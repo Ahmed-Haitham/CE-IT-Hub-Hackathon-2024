@@ -22,7 +22,7 @@ def list_symptom_disease_group_associations(db: Session, skip: int = 0, limit: i
     return db.query(models.AssocSymptomDiseaseGroup).offset(skip).limit(limit).all()
 
 #Create functions to write to the DB
-def create_symptom(db: Session, symptom: schemas.Symptom):
+def create_symptom(db: Session, symptom: schemas.CreateSymptom):
     db_symptom = models.Symptom(**symptom.model_dump())
     db.add(db_symptom)
     db.commit()

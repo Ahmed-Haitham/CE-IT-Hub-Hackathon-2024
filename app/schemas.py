@@ -1,28 +1,36 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
-class Symptom(BaseModel):
+class BaseSymptom(BaseModel):
     #https://docs.pydantic.dev/latest/concepts/models/#arbitrary-class-instances
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
     medical_name: str
     description: Optional[str]
-    is_red_flag: bool
     symmetricity: Optional[str]
     progression: Optional[str]
     age_onset_group: Optional[str]
     media_path: Optional[str]
     tags: list[str]
 
-class DiseaseGroup(BaseModel):
+class CreateSymptom(BaseSymptom):
+    is_red_flag: Optional[bool]
+
+class ReadSymptom(BaseSymptom):
+    id: int
+    is_red_flag: bool
+
+class BaseDiseaseGroup(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
     medical_name: str
     summary_message: Optional[str]
-    excluding_symptoms: Optional[list[int]]
-    required_symptoms: Optional[list[int]]
+
+class CreateDiseaseGroup(BaseDiseaseGroup):
+    pass
+
+class ReadDiseaseGroup(BaseDiseaseGroup):
+    id: int
 
 class AssocSymptomDiseaseGroup(BaseModel):
     model_config = ConfigDict(from_attributes=True)

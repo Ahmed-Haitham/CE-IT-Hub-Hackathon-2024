@@ -24,10 +24,10 @@ def get_db():
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/symptoms", response_model=list[schemas.Symptom])
+@app.get("/symptoms", response_model=list[schemas.ReadSymptom])
 def list_symptoms(db = Depends(get_db)):
     return crud.list_symptoms(db)
 
-@app.post("/symptoms", response_model=schemas.Symptom)
-def create_symptom(symptom: schemas.Symptom, db = Depends(get_db)):
+@app.post("/symptoms", response_model=schemas.ReadSymptom)
+def create_symptom(symptom: schemas.CreateSymptom, db = Depends(get_db)):
     return crud.create_symptom(db, symptom)
