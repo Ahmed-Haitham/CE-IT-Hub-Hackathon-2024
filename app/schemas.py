@@ -1,30 +1,32 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
+from .models import SymmetricityChoices, ProgressionChoices, OnsetChoices
+
 class BaseSymptom(BaseModel):
     #https://docs.pydantic.dev/latest/concepts/models/#arbitrary-class-instances
     model_config = ConfigDict(from_attributes=True)
 
     medical_name: str
-    description: Optional[str]
-    symmetricity: Optional[str]
-    progression: Optional[str]
-    age_onset_group: Optional[str]
-    media_path: Optional[str]
+    description: str | None = None
+    is_red_flag: bool | None = False
+    symmetricity: str | None = 'na'
+    progression: str
+    age_onset_group: str
+    media_path: str | None = None
     tags: list[str]
 
 class CreateSymptom(BaseSymptom):
-    is_red_flag: Optional[bool]
+    pass
 
 class ReadSymptom(BaseSymptom):
     id: int
-    is_red_flag: bool
 
 class BaseDiseaseGroup(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     medical_name: str
-    summary_message: Optional[str]
+    summary_message: str
 
 class CreateDiseaseGroup(BaseDiseaseGroup):
     pass

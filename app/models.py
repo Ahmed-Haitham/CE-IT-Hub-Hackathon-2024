@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 
 from .db import Base
 
-class symmetricityChoices(enum.Enum):
+class SymmetricityChoices(enum.Enum):
     bilateral = "Bilateral: Both sides of the body are affected"
     unilateral = "Unilateral: Only one side of the body is affected"
     na = "Not Applicable"
@@ -31,9 +31,9 @@ class Symptom(Base):
     medical_name = Column(String(128), nullable=False)
     description = Column(String(5000))
     is_red_flag = Column(Boolean, default=False)
-    symmetricity = Column(Enum(symmetricityChoices), default="na")
-    progression = Column(Enum(ProgressionChoices))
-    age_onset_group = Column(Enum(OnsetChoices))
+    symmetricity = Column(Enum(SymmetricityChoices), default="na")
+    progression = Column(Enum(ProgressionChoices), nullable=False)
+    age_onset_group = Column(Enum(OnsetChoices), nullable=False)
     media_path = Column(String(128))
     tags = Column(ARRAY(String), nullable=False)
 
@@ -42,7 +42,7 @@ class DiseaseGroup(Base):
 
     id = Column(Integer, default=None, primary_key=True)
     medical_name = Column(String(128), nullable=False)
-    summary_message = Column(String(5000))
+    summary_message = Column(String(5000), nullable=False)
 
 #https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#many-to-many
 assoc_symptoms_disease_groups = Table(
@@ -53,4 +53,4 @@ assoc_symptoms_disease_groups = Table(
     Column('disease_group_id', Integer, ForeignKey('disease_groups.id'))
 )
 
-'''add exluding and mandatory symptom association tables'''
+#TODO: add exluding and mandatory symptom association tables
