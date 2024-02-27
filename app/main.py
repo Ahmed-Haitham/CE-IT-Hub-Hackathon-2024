@@ -2,7 +2,8 @@
 
 import asyncio
 
-from fastapi import FastAPI, Depends
+from typing import Optional
+from fastapi import FastAPI, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import schemas
@@ -23,9 +24,14 @@ async def root():
     return {"message": "See /docs or /redoc for the API documentation"}
 
 @app.get("/symptoms", response_model=list[schemas.ReadSymptom])
-async def list_symptoms(db: AsyncSession = Depends(get_session)):
+async def list_symptoms(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
     client = SymptomClient(db)
-    return await client.list_symptoms()
+    return await client.list_symptoms(search_for)
+
+@app.get("/symptoms/{symptom_id}", response_model=schemas.ReadSymptom)
+async def get_symptom(symptom_id: int, db: AsyncSession = Depends(get_session)):
+    client = SymptomClient(db)
+    return await client.get_symptom(symptom_id)
 
 @app.post("/symptoms", response_model=schemas.ReadSymptom)
 async def create_symptom(symptom: schemas.CreateSymptom, db: AsyncSession = Depends(get_session)):

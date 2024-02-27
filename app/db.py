@@ -6,8 +6,7 @@ from .config import settings
 
 #TODO Disable echo in production
 engine = create_async_engine(settings.db_url, echo=True)
-#TODO Understand use of autoflush
-AsyncSessionFactory = async_sessionmaker(engine, autoflush=False)
+AsyncSessionFactory = async_sessionmaker(engine) #, autoflush=False can be used to avoid refreshing data after each query
 
 Base = declarative_base()
 

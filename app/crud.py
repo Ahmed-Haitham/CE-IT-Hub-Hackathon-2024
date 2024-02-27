@@ -5,7 +5,7 @@ from sqlalchemy import select
 from . import models, schemas
 
 async def _execute_statement(session: AsyncSession, statement):
-    return await session.execute(statement)
+    return await session.scalars(statement)
 
 class SymptomClient():
     def __init__(self, session: AsyncSession):
@@ -13,12 +13,21 @@ class SymptomClient():
     async def get_symptom(self, symptom_id: int):
         statement = select(models.Symptom).filter(models.Symptom.id == symptom_id)
         result =  await _execute_statement(self.session, statement)
-        return result.scalar().all()
+        return result.first()
 
-    async def list_symptoms(self, skip: int = 0, limit: int = 1000):
-        statement = select(models.Symptom).offset(skip).limit(limit)
+    async def list_symptoms(self, search_for, skip: int = 0, limit: int = 1000):
+        statement = select(models.Symptom)
+        if search_for:
+            statement = statement.filter(
+                #ilike is case insensitive like
+                models.Symptom.medical_name.ilike('%' + search_for + '%') |
+                #could not find a way to search for case insensitive tags in an array
+                #could not find a way to seach for parts of a tag in an array
+                models.Symptom.tags.contains([search_for]),
+                )
+        statement = statement.offset(skip).limit(limit)
         result = await _execute_statement(self.session, statement)
-        return result.scalars().all()
+        return result.all()
 
     async def create_symptom(self, symptom: schemas.CreateSymptom):
         new_symptom = models.Symptom(**symptom.model_dump())
