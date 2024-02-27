@@ -1,8 +1,8 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
 
 from .models import SymmetricityChoices, ProgressionChoices, OnsetChoices
 
+#https://fastapi.tiangolo.com/tutorial/body/#request-body
 class BaseSymptom(BaseModel):
     #https://docs.pydantic.dev/latest/concepts/models/#arbitrary-class-instances
     model_config = ConfigDict(from_attributes=True)
@@ -40,3 +40,5 @@ class AssocSymptomDiseaseGroup(BaseModel):
     id: int
     symptom_id: int
     disease_group_id: int
+
+#TODO: add exluding and mandatory symptom association tables
