@@ -1,37 +1,40 @@
 # app/main.py
 
-from fastapi import FastAPI, Depends
+import asyncio
+
+from typing import Optional
+from fastapi import FastAPI, Depends, Query
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import schemas
-from app import crud
+from app.crud import SymptomClient, DiseaseGroupClient, AssocSymptomDiseaseGroupClient
 
 from .models import Base, Symptom, DiseaseGroup
-from .db import SessionLocal, engine
+from .db import engine, get_session, start_db
 
-# This creates the tables in the database
-Base.metadata.create_all(bind=engine)
 app = FastAPI(title="WUM Neurological disease tool backend")
 
-
-# Other functions depend on this one to get a session via fastapi's dependency injection
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+#This won't be required in production, as the db will be persistent
+@app.on_event("startup")
+async def startup_event():
+    await start_db(engine)
 
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "See /docs or /redoc for the API documentation"}
 
+@app.get("/symptoms", response_model=list[schemas.ReadSymptom])
+async def list_symptoms(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+    client = SymptomClient(db)
+    return await client.list_symptoms(search_for)
 
-@app.get("/symptoms", response_model=list[schemas.Symptom])
-def list_symptoms(db=Depends(get_db)):
-    return crud.list_symptoms(db)
+@app.get("/symptoms/{symptom_id}", response_model=schemas.ReadSymptom)
+async def get_symptom(symptom_id: int, db: AsyncSession = Depends(get_session)):
+    client = SymptomClient(db)
+    return await client.get_symptom(symptom_id)
 
-
-@app.post("/symptoms", response_model=schemas.Symptom)
-def create_symptom(symptom: schemas.Symptom, db=Depends(get_db)):
-    return crud.create_symptom(db, symptom)
+@app.post("/symptoms", response_model=schemas.ReadSymptom)
+async def create_symptom(symptom: schemas.CreateSymptom, db: AsyncSession = Depends(get_session)):
+    client = SymptomClient(db)
+    return await client.create_symptom(symptom)

@@ -17,7 +17,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
   api:
     build: .
     depends_on:
@@ -28,7 +27,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DB_URL=postgresql://${PG_USER}:${PG_PASSWORD}@db:${DB_EXPOSED_PORT}/${PG_INSTANCE}
-    
+      - DB_URL=postgresql+asyncpg://${PG_USER}:${PG_PASSWORD}@db:${DB_PORT}/${PG_INSTANCE}
 volumes:
   pgdata:

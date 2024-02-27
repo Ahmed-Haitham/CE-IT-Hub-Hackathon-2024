@@ -61,7 +61,14 @@ Check it by running: <br/>
 sudo docker compose ps <br/>
 If you have issues spinning up containers, use: <br/>
 sudo docker compose logs CONTAINERNAME <br/>
+Now you should have a running postgres db on port 5432 and a fastapi server on http://127.0.0.1:8000/
 To spin the containers down: <br/>
 sudo docker compose down <br/>
 If you also want to delete the persisted database volume: <br/>
 sudo docker compose down -v
+
+## Optional: Create a python virtual environment and install requirements
+This will help you by making vs code suggest valid autocompletes <br/>
+cd ENV DIRECTORY <br/>
+python3 -m venv hackenv <br/>
+pip install -r requirements.txt
