@@ -20,7 +20,6 @@ services:
 
   api:
     build: .
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
     depends_on:
       db:
         condition: service_healthy
@@ -31,18 +30,5 @@ services:
     environment:
       - DB_URL=postgresql://${PG_USER}:${PG_PASSWORD}@db:${DB_EXPOSED_PORT}/${PG_INSTANCE}
     
-  api_admin:
-    build: .
-    command: uvicorn app.main_admin:app --host 0.0.0.0 --port 8001
-    depends_on:
-      db:
-        condition: service_healthy
-    volumes:
-      - .:/app
-    ports:
-      - "8001:8001"
-    environment:
-      - DB_URL=postgresql://${PG_USER}:${PG_PASSWORD}@db:${DB_EXPOSED_PORT}/${PG_INSTANCE}
-
 volumes:
   pgdata:
