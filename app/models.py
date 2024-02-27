@@ -1,9 +1,11 @@
 import enum
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Enum, Table
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, DeclarativeBase
 
-from .db import Base
+#from .db import Base
+class Base(DeclarativeBase):
+    pass
 
 class SymmetricityChoices(enum.Enum):
     bilateral = "Bilateral: Both sides of the body are affected"
@@ -25,6 +27,13 @@ class OnsetChoices(enum.Enum):
     middle_age = "Middle age: Appeared between 30 and 50 years old"
     senior = "Senior: Appeared after 50 years old"
 
+link_symptom_disease_group = Table(
+    'link_symptom_disease_group',
+    Base.metadata,
+    Column('symptom_id', ForeignKey('symptoms.id'), primary_key=True),
+    Column('disease_group_id', ForeignKey('disease_groups.id'), primary_key=True)
+    )
+
 class Symptom(Base):
     __tablename__ = "symptoms"
 
@@ -38,12 +47,16 @@ class Symptom(Base):
     media_path = Column(String(128))
     tags = Column(ARRAY(String), nullable=False)
 
+    appears_in_diseases = relationship("DiseaseGroup", secondary=link_symptom_disease_group, back_populates="has_symptoms")
+
 class DiseaseGroup(Base):
     __tablename__ = "disease_groups"
 
     id = Column(Integer, default=None, primary_key=True)
     medical_name = Column(String(128), nullable=False)
     summary_message = Column(String(5000), nullable=False)
+
+    has_symptoms = relationship("Symptom", secondary=link_symptom_disease_group, back_populates="appears_in_diseases")
 
 #https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#many-to-many
 assoc_symptoms_disease_groups = Table(
@@ -55,3 +68,27 @@ assoc_symptoms_disease_groups = Table(
 )
 
 #TODO: add exluding and mandatory symptom association tables
+
+'''
+association_table = Table(
+    "association_table",
+    Base.metadata,
+    Column("left_id", ForeignKey("left_table.id")),
+    Column("right_id", ForeignKey("right_table.id")),
+)
+
+Example from docs
+class Parent(Base):
+    __tablename__ = "parent_table"
+
+    id = mapped_column(Integer, primary_key=True)
+    children = relationship("Child", back_populates="parent")
+
+
+class Child(Base):
+    __tablename__ = "child_table"
+
+    id = mapped_column(Integer, primary_key=True)
+    parent_id = mapped_column(ForeignKey("parent_table.id"))
+    parent = relationship("Parent", back_populates="children")
+'''
