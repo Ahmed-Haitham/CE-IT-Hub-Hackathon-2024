@@ -37,3 +37,18 @@ async def get_symptom(symptom_id: int, db: AsyncSession = Depends(get_session)):
 async def create_symptom(symptom: schemas.CreateSymptom, db: AsyncSession = Depends(get_session)):
     client = SymptomClient(db)
     return await client.create_symptom(symptom)
+
+@app.get("/diseaseGroups", response_model=list[schemas.ReadDiseaseGroup])
+async def list_disease_groups(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+    client = DiseaseGroupClient(db)
+    return await client.list_disease_groups(search_for)
+
+@app.get("/diseaseGroups/{disease_group_id}", response_model=schemas.ReadDiseaseGroup)
+async def get_disease_group(disease_group: int, db: AsyncSession = Depends(get_session)):
+    client = DiseaseGroupClient(db)
+    return await client.get_disease_group(disease_group)
+
+@app.post("/diseaseGroups", response_model=schemas.ReadDiseaseGroup)
+async def create_disease_group(disease_group: schemas.CreateDiseaseGroup, db: AsyncSession = Depends(get_session)):
+    client = DiseaseGroupClient(db)
+    return await client.create_disease_group(disease_group)

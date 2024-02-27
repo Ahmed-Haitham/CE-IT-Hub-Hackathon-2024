@@ -41,11 +41,25 @@ class DiseaseGroupClient():
         self.session = session
     async def get_disease_group(self, disease_group_id: int):
         statement = select(models.DiseaseGroup).filter(models.DiseaseGroup.id == disease_group_id)
-        return await _execute_statement(self.session, statement)
+        result =  await _execute_statement(self.session, statement)
+        return result.first()
 
-    async def list_disease_groups(self, skip: int = 0, limit: int = 1000):
-        statement = select(models.DiseaseGroup).offset(skip).limit(limit)
-        return await _execute_statement(self.session, statement)
+    async def list_disease_groups(self, search_for, skip: int = 0, limit: int = 1000):
+        statement = select(models.DiseaseGroup)
+        if search_for:
+            statement = statement.filter(
+                models.DiseaseGroup.medical_name.ilike('%' + search_for + '%')
+                )
+        statement = statement.offset(skip).limit(limit)
+        result = await _execute_statement(self.session, statement)
+        return result.all()
+
+    async def create_disease_group(self, disease_group: schemas.CreateDiseaseGroup):
+        new_disease_group = models.DiseaseGroup(**disease_group.model_dump())
+        self.session.add(new_disease_group)
+        await self.session.commit()
+        await self.session.refresh(new_disease_group)
+        return new_disease_group
 
 class AssocSymptomDiseaseGroupClient():
     def __init__(self, session: AsyncSession):
