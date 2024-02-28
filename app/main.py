@@ -19,6 +19,7 @@ app = FastAPI(title="WUM Neurological disease tool backend")
 async def startup_event():
     await start_db(engine)
 
+
 @app.get("/")
 async def root():
     return {"message": "See /docs or /redoc for the API documentation"}

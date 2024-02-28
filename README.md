@@ -53,7 +53,7 @@ You can paste the following, or change the values <br/>
 PG_INSTANCE=pginstance <br/>
 PG_USER=user <br/>
 PG_PASSWORD=pass <br/>
-DB_EXPOSED_PORT=5432 <br/>
+DB_PORT=5432 <br/>
 cd CE-IT-Hub-Hackathon-2024 <br/>
 sudo docker compose up -d --build <br/>
 Now you should have 2 containers running (web and db) <br/>
