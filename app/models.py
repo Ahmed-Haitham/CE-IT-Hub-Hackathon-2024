@@ -28,8 +28,8 @@ class OnsetChoices(enum.Enum):
 link_symptom_disease_group = Table(
     'link_symptom_disease_group',
     Base.metadata,
-    Column('symptom_id', ForeignKey('symptoms.id'), primary_key=True),
-    Column('disease_group_id', ForeignKey('disease_groups.id'), primary_key=True)
+    Column('disease_group_id', ForeignKey('disease_groups.id'), primary_key=True),
+    Column('symptom_id', ForeignKey('symptoms.id'), primary_key=True)
     )
 
 required_symptoms = Table(
@@ -67,7 +67,8 @@ class DiseaseGroup(Base):
     __tablename__ = "disease_groups"
 
     id = Column(Integer, default=None, primary_key=True)
-    medical_name = Column(String(128), nullable=False)
+    #Here unique coudl make sense, because a disease group does not need to have duplicates to account for different symptom attributes
+    medical_name = Column(String(128), nullable=False)#, unique=True
     summary_message = Column(String(5000), nullable=False)
 
     has_symptoms = relationship("Symptom", secondary=link_symptom_disease_group, back_populates="appears_in_diseases")

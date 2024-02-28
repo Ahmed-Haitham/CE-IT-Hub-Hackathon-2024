@@ -36,9 +36,14 @@ class ReadDiseaseGroup(BaseDiseaseGroup):
     id: int
 
 class CreateLinksSubmission(BaseModel):
-    symptom_id_list: list[int] | None = None
-    required_symptom_id_list: list[int] | None = None
-    excluding_symptom_id_list: list[int] | None = None
+    '''Accepts both ids and names for symptoms'''
+    symptoms_list: list[str] | list[int] | None = None
+    required_symptoms_list: list[str] | list[int] | None = None
+    excluding_symptoms_list: list[str] | list[int] | None = None
 
 class CreateLinks(CreateLinksSubmission):
     disease_group_id: int
+
+class ReadSymptomDiseaseGroupLink(BaseModel):
+    disease_group_id: int
+    symptom_id: int
