@@ -1,6 +1,6 @@
 #from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, insert
 
 from . import models, schemas
 
@@ -61,13 +61,29 @@ class DiseaseGroupClient():
         await self.session.refresh(new_disease_group)
         return new_disease_group
 
-class AssocSymptomDiseaseGroupClient():
+class LinkingClient():
     def __init__(self, session: AsyncSession):
         self.session = session
-    async def get_symptom_disease_group_association(self, assoc_id: int):
-        statement = select(models.AssocSymptomDiseaseGroup).filter(models.AssocSymptomDiseaseGroup.id == assoc_id)
-        return await _execute_statement(self.session, statement)
+    async def get_symptom_disease_group_link(self, symptom_id: int, disease_group_id: int):
+        statement = select(models.link_symptom_disease_group).filter(
+            models.link_symptom_disease_group.disease_group_id == disease_group_id,
+            models.link_symptom_disease_group.symptom_id == symptom_id
+            )
+        result =  await _execute_statement(self.session, statement)
+        return result.first()
 
-    async def list_symptom_disease_group_associations(self, skip: int = 0, limit: int = 1000):
-        statement = select(models.AssocSymptomDiseaseGroup).offset(skip).limit(limit)
-        return await _execute_statement(self.session, statement)
+    async def list_symptom_disease_group_links(self, skip: int = 0, limit: int = 1000):
+        statement = select(models.link_symptom_disease_group).offset(skip).limit(limit)
+        result = await _execute_statement(self.session, statement)
+        return result.all()
+
+    async def create_symptom_disease_group_link(self, associations: dict):
+        added_links = []
+        for symptom in associations['symptom_id_list']:
+            new_link_statement = insert(models.link_symptom_disease_group).values(
+                disease_group_id=associations['disease_group_id'],
+                symptom_id=symptom)
+            await self.session.execute(new_link_statement)
+            await self.session.flush()
+        await self.session.commit()
+        return

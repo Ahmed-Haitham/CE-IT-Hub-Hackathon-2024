@@ -7,7 +7,7 @@ from fastapi import FastAPI, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import schemas
-from app.crud import SymptomClient, DiseaseGroupClient, AssocSymptomDiseaseGroupClient
+from app.crud import SymptomClient, DiseaseGroupClient, LinkingClient
 
 from .models import Base, Symptom, DiseaseGroup
 from .db import engine, get_session, start_db
@@ -48,7 +48,17 @@ async def get_disease_group(disease_group: int, db: AsyncSession = Depends(get_s
     client = DiseaseGroupClient(db)
     return await client.get_disease_group(disease_group)
 
-@app.post("/diseaseGroups", response_model=schemas.ReadDiseaseGroup)
-async def create_disease_group(disease_group: schemas.CreateDiseaseGroup, db: AsyncSession = Depends(get_session)):
+@app.post("/diseaseGroups", response_model=dict)
+async def create_disease_group(disease_group: schemas.CreateDiseaseGroup, associations: schemas.CreateLinksSubmission | None = None, db: AsyncSession = Depends(get_session)):
     client = DiseaseGroupClient(db)
-    return await client.create_disease_group(disease_group)
+    created = await client.create_disease_group(disease_group)
+    if associations:
+        new_link = {"disease_group_id": created.id, "symptom_id_list": associations.symptom_id_list}
+        relation_client = LinkingClient(db)
+        await relation_client.create_symptom_disease_group_link(new_link)
+    return new_link
+
+@app.get("/symptomDiseaseGroupLinks", response_model=list)
+async def list_symptom_disease_group_links(db: AsyncSession = Depends(get_session)):
+    client = LinkingClient(db)
+    return await client.list_symptom_disease_group_links()

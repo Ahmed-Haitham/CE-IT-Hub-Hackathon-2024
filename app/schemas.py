@@ -27,6 +27,7 @@ class BaseDiseaseGroup(BaseModel):
 
     medical_name: str
     summary_message: str
+    #accept ids or symptom names, or lists of them
 
 class CreateDiseaseGroup(BaseDiseaseGroup):
     pass
@@ -34,11 +35,10 @@ class CreateDiseaseGroup(BaseDiseaseGroup):
 class ReadDiseaseGroup(BaseDiseaseGroup):
     id: int
 
-class AssocSymptomDiseaseGroup(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
+class CreateLinksSubmission(BaseModel):
+    symptom_id_list: list[int] | None = None
+    required_symptom_id_list: list[int] | None = None
+    excluding_symptom_id_list: list[int] | None = None
 
-    id: int
-    symptom_id: int
+class CreateLinks(CreateLinksSubmission):
     disease_group_id: int
-
-#TODO: add exluding and mandatory symptom association tables
