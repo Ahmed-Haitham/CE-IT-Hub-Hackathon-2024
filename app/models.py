@@ -2,9 +2,7 @@ import enum
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Enum, Table
 from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.orm import relationship, DeclarativeBase
-
-class Base(DeclarativeBase):
-    pass
+from .db import Base
 
 class SymmetricityChoices(enum.Enum):
     bilateral = "Bilateral: Both sides of the body are affected"

@@ -1,6 +1,5 @@
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 from .config import settings
 
@@ -8,7 +7,8 @@ from .config import settings
 engine = create_async_engine(settings.db_url, echo=True)
 AsyncSessionFactory = async_sessionmaker(engine) #, autoflush=False can be used to avoid refreshing data after each query
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    pass
 
 #This creates the tables in the database
 async def start_db(engine):
