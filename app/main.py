@@ -7,7 +7,7 @@ from fastapi import FastAPI, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import schemas
-from app.crud import SymptomClient, DiseaseGroupClient, LinkingClient
+from app.crud import SymptomClient, DiseaseGroupClient
 
 from .models import Base, Symptom, DiseaseGroup
 from .db import engine, get_session, start_db
@@ -45,26 +45,12 @@ async def list_disease_groups(search_for: str | None = None, db: AsyncSession = 
     client = DiseaseGroupClient(db)
     return await client.list_disease_groups(search_for)
 
-@app.get("/diseaseGroups/{disease_group_id}", response_model=schemas.ReadDiseaseGroup)
-async def get_disease_group(disease_group: int, db: AsyncSession = Depends(get_session)):
+@app.get("/diseaseGroups/{disease_group_id}", response_model=schemas.ReadRelatedDiseaseGroup | schemas.ReadRelatedDiseaseGroup) #schemas.ReadRelatedDiseaseGroup | schemas.ReadDiseaseGroup
+async def get_disease_group(disease_group: int, return_relationships: bool = False, db: AsyncSession = Depends(get_session)):
     client = DiseaseGroupClient(db)
-    return await client.get_disease_group(disease_group)
+    return await client.get_disease_group(disease_group, return_relationships)
 
-@app.post("/diseaseGroups", response_model=list)
+@app.post("/diseaseGroups", response_model=schemas.ReadDiseaseGroup)
 async def create_disease_group(disease_group: schemas.CreateDiseaseGroup, links: schemas.CreateLinksSubmission | None = None, db: AsyncSession = Depends(get_session)):
     client = DiseaseGroupClient(db)
-    created_disease_group = await client.create_disease_group(disease_group)
-    #Now find the symptom in the db and create the link
-    if links:
-        new_link_base = {"disease_group_id": created_disease_group.id, "symptoms_list": links.symptoms_list}
-        new_link_list = []
-        for symptom in new_link_base['symptoms_list']:
-            new_link_dict = {"disease_group_id": new_link_base["disease_group_id"], "symptom": symptom}
-            new_link_list.append(new_link_dict)
-        #pass a list of dictionaries to insert as rows in the link table
-        return await client.create_symptom_disease_group_link(new_link_list)
-
-@app.get("/symptomDiseaseGroupLinks", response_model=list[schemas.ReadSymptomDiseaseGroupLink])
-async def list_symptom_disease_group_links(disease_group_id: int | None = None, db: AsyncSession = Depends(get_session)):
-    client = LinkingClient(db)
-    return await client.list_symptom_disease_group_links()
+    return await client.create_disease_group(disease_group, links)
