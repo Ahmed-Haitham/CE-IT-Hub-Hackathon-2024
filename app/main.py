@@ -45,7 +45,7 @@ async def list_disease_groups(search_for: str | None = None, db: AsyncSession = 
     client = DiseaseGroupClient(db)
     return await client.list_disease_groups(search_for)
 
-@app.get("/diseaseGroups/{disease_group_id}", response_model=schemas.ReadRelatedDiseaseGroup | schemas.ReadRelatedDiseaseGroup) #schemas.ReadRelatedDiseaseGroup | schemas.ReadDiseaseGroup
+@app.get("/diseaseGroups/{disease_group_id}", response_model=schemas.ReadRelatedDiseaseGroup | schemas.ReadRelatedDiseaseGroup)
 async def get_disease_group(disease_group: int, return_relationships: bool = False, db: AsyncSession = Depends(get_session)):
     client = DiseaseGroupClient(db)
     return await client.get_disease_group(disease_group, return_relationships)

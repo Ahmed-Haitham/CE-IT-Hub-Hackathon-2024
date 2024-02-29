@@ -45,7 +45,7 @@ class DiseaseGroupClient():
     async def get_disease_group(self, disease_group_id: int, return_relationships: bool):
         if return_relationships:
             logging.info("returning relationships")
-            statement = select(models.DiseaseGroup, *models.Symptom.__table__.columns).filter(
+            statement = select(models.DiseaseGroup, models.Symptom).filter(
                 models.DiseaseGroup.id == disease_group_id).options(
                     joinedload(models.DiseaseGroup.has_symptoms), 
                     joinedload(models.DiseaseGroup.has_required_symptoms),
