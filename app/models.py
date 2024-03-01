@@ -1,75 +1,66 @@
 import enum
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Enum, Table
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import relationship, DeclarativeBase
+from sqlalchemy.orm import relationship
 from .db import Base
 
 class SymmetricityChoices(enum.Enum):
-    bilateral = "Bilateral: Both sides of the body are affected"
+    '''bilateral = "Bilateral: Both sides of the body are affected"
     unilateral = "Unilateral: Only one side of the body is affected"
     na = "Not Applicable"
+    '''
+    unilateral = "asymetryczny"
+    bilateral = "symetryczny"
+    na = "na"
 
 class ProgressionChoices(enum.Enum):
+    '''
     variable = "Variable: Periods of deterioration and improvement"
     persistent = "Persistent: Symptoms are always present with constant intensity"
     slow_progressing = "Slowly progressing: Symptoms slowly worsen over years"
     medium_progressing = "Medium progressing: Symptoms gradually worsen over months"
-    fast_progressing = "Fast progressing: Symptoms rapidly worsen over days or weeks"
+    fast_progressing = "Fast progressing: Symptoms rapidly worsen over days or weeks"\
+    '''
+    stable = "stałe/postępujące"
+    variable = "zmienne"
 
 class OnsetChoices(enum.Enum):
+    '''
     congenital = "Congenital: Present at birth"
     childhood = "Childhood: Appeared before 10 years old"
     adolescence = "Adolescence: Appeared between 10 and 20 years old"
     young_adulthood = "Young adulthood: Appeared between 20 and 30 years old"
     middle_age = "Middle age: Appeared between 30 and 50 years old"
     senior = "Senior: Appeared after 50 years old"
+    '''
+    birth = "od urodzenia / wczesnego niemowlęctwa"
+    under_ten = "<10 rż"
+    ten_to_twenty = "10-20rż"
+    twenty_to_thirty = "20-30rż"
+    thirty_to_fifty = "30-50  rż"
+    over_fifty = ">50rż"
 
-#https://docs.sqlalchemy.org/en/20/orm/basic_relationships.html#many-to-many
-link_symptom_disease_group = Table(
-    'link_symptom_disease_group',
-    Base.metadata,
-    Column('symptom_id', ForeignKey('symptoms.id'), primary_key=True),
-    Column('disease_group_id', ForeignKey('disease_groups.id'), primary_key=True)
-    )
+class CkLevelChoices(enum.Enum):
+    normal = "norma"
+    over_one_k = "powyżej normy do 1000"
+    one_k_to_ten_k = ">1000 do 10000"
+    over_ten_k = "> 10000"
+    not_tested = "nie było oznaczone (komunikat- wykonaj badanie)"
 
-required_symptoms = Table(
-    'required_symptoms',
-    Base.metadata,
-    Column('disease_group_id', ForeignKey('disease_groups.id'), primary_key=True),
-    Column('required_symptom_id', ForeignKey('symptoms.id'), primary_key=True)
-    )
-
-excluding_symptoms = Table(
-    'excluding_symptoms',
-    Base.metadata,
-    Column('disease_group_id', ForeignKey('disease_groups.id'), primary_key=True),
-    Column('excluding_symptom_id', ForeignKey('symptoms.id'), primary_key=True)
-    )
-
-class Symptom(Base):
-    __tablename__ = "symptoms"
+class OneBigTable(Base):
+    __tablename__ = "big_table"
 
     id = Column(Integer, default=None, primary_key=True)
-    medical_name = Column(String(128), nullable=False)
-    description = Column(String(5000))
-    is_red_flag = Column(Boolean, default=False)
-    symmetricity = Column(Enum(SymmetricityChoices), default="na")
-    progression = Column(Enum(ProgressionChoices), nullable=False)
-    age_onset_group = Column(Enum(OnsetChoices), nullable=False)
-    media_path = Column(String(128))
-    tags = Column(ARRAY(String), nullable=False)
+    symptom_medical_name = Column(String(128), nullable=False)
+    symptom_description = Column(String(5000))
+    #symptom_is_red_flag = Column(Boolean, default=False)
+    symptom_symmetricity = Column(Enum(SymmetricityChoices), default="na", nullable=False)
+    symptom_progression = Column(Enum(ProgressionChoices), nullable=False)
+    symptom_age_onset_group = Column(Enum(OnsetChoices), nullable=False)
+    symptom_media_path = Column(String(128))
+    symptom_tags = Column(ARRAY(String), nullable=False)
 
-    appears_in_diseases = relationship("DiseaseGroup", secondary=link_symptom_disease_group, back_populates="has_symptoms")
-    required_in_diseases = relationship("DiseaseGroup", secondary=required_symptoms, back_populates="has_required_symptoms")
-    excluding_in_diseases = relationship("DiseaseGroup", secondary=excluding_symptoms, back_populates="has_excluding_symptoms")
+    disease_group_medical_name = Column(String(128), nullable=False)#, unique=True
+    disease_group_summary_message = Column(String(5000), nullable=False)
 
-class DiseaseGroup(Base):
-    __tablename__ = "disease_groups"
-
-    id = Column(Integer, default=None, primary_key=True)
-    medical_name = Column(String(128), nullable=False)
-    summary_message = Column(String(5000), nullable=False)
-
-    has_symptoms = relationship("Symptom", secondary=link_symptom_disease_group, back_populates="appears_in_diseases")
-    has_required_symptoms = relationship("Symptom", secondary=required_symptoms, back_populates="required_in_diseases")
-    has_excluding_symptoms = relationship("Symptom", secondary=excluding_symptoms, back_populates="excluding_in_diseases")
+    test_ck_level = Column(Enum(CkLevelChoices), default="not_tested")

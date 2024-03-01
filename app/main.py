@@ -3,13 +3,13 @@
 import asyncio
 
 from typing import Optional
-from fastapi import FastAPI, Depends, Query
+from fastapi import FastAPI, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import schemas
-from app.crud import SymptomClient, DiseaseGroupClient, LinkingClient
+from app.crud import SymptomClient, DiseaseGroupClient, BigTableClient
 
-from .models import Base, Symptom, DiseaseGroup
+from .models import Base, OneBigTable
 from .db import engine, get_session, start_db
 
 app = FastAPI(title="WUM Neurological disease tool backend")
@@ -19,47 +19,41 @@ app = FastAPI(title="WUM Neurological disease tool backend")
 async def startup_event():
     await start_db(engine)
 
-
 @app.get("/")
 async def root():
     return {"message": "See /docs or /redoc for the API documentation"}
 
-@app.get("/symptoms", response_model=list[schemas.ReadSymptom])
+@app.get("/symptoms", response_model=list[schemas.SymptomBigTable])
 async def list_symptoms(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
     client = SymptomClient(db)
     return await client.list_symptoms(search_for)
 
-@app.get("/symptoms/{symptom_id}", response_model=schemas.ReadSymptom)
-async def get_symptom(symptom_id: int, db: AsyncSession = Depends(get_session)):
+@app.get("/symptoms/{symptom}", response_model=schemas.SymptomBigTable)
+async def get_symptom(symptom_name: str, db: AsyncSession = Depends(get_session)):
     client = SymptomClient(db)
-    return await client.get_symptom(symptom_id)
+    return await client.get_symptom(symptom_name)
 
-@app.post("/symptoms", response_model=schemas.ReadSymptom)
-async def create_symptom(symptom: schemas.CreateSymptom, db: AsyncSession = Depends(get_session)):
-    client = SymptomClient(db)
-    return await client.create_symptom(symptom)
-
-@app.get("/diseaseGroups", response_model=list[schemas.ReadDiseaseGroup])
+@app.get("/diseaseGroups", response_model=list[schemas.DiseaseGroupBigTable])
 async def list_disease_groups(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
     client = DiseaseGroupClient(db)
     return await client.list_disease_groups(search_for)
 
-@app.get("/diseaseGroups/{disease_group_id}", response_model=schemas.ReadDiseaseGroup)
-async def get_disease_group(disease_group: int, db: AsyncSession = Depends(get_session)):
+@app.get("/diseaseGroups/{disease_group}", response_model=schemas.DiseaseGroupBigTable)
+async def get_disease_group(disease_group: str, db: AsyncSession = Depends(get_session)):
     client = DiseaseGroupClient(db)
     return await client.get_disease_group(disease_group)
 
-@app.post("/diseaseGroups", response_model=dict)
-async def create_disease_group(disease_group: schemas.CreateDiseaseGroup, associations: schemas.CreateLinksSubmission | None = None, db: AsyncSession = Depends(get_session)):
-    client = DiseaseGroupClient(db)
-    created = await client.create_disease_group(disease_group)
-    if associations:
-        new_link = {"disease_group_id": created.id, "symptom_id_list": associations.symptom_id_list}
-        relation_client = LinkingClient(db)
-        await relation_client.create_symptom_disease_group_link(new_link)
-    return new_link
+@app.get('/bigTable', response_model=None)# here there is an issue with the schema of the response list[schemas.FullBigTable]
+async def list_table_entries(db: AsyncSession = Depends(get_session)):
+    client = BigTableClient(db)
+    return await client.list_table_entries()
 
-@app.get("/symptomDiseaseGroupLinks", response_model=list)
-async def list_symptom_disease_group_links(db: AsyncSession = Depends(get_session)):
-    client = LinkingClient(db)
-    return await client.list_symptom_disease_group_links()
+@app.get('/bigTable/{entry_id}', response_model=None) #schemas.FullBigTable
+async def get_table_entry(table_entry_id: int, db: AsyncSession = Depends(get_session)):
+    client = BigTableClient(db)
+    return await client.get_table_entry(table_entry_id)
+
+@app.post('/bigTable', response_model=None)#schemas.FullBigTable
+async def post_table_entry(table_entry: schemas.BaseBigTable, db: AsyncSession = Depends(get_session)):
+    client = BigTableClient(db)
+    return await client.add_entry(table_entry)
