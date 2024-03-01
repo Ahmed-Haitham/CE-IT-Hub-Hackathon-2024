@@ -1,44 +1,47 @@
 from pydantic import BaseModel, ConfigDict
 
-from .models import SymmetricityChoices, ProgressionChoices, OnsetChoices
+from .models import SymmetricityChoices, ProgressionChoices, OnsetChoices, CkLevelChoices
 
-#https://fastapi.tiangolo.com/tutorial/body/#request-body
-class BaseSymptom(BaseModel):
-    #https://docs.pydantic.dev/latest/concepts/models/#arbitrary-class-instances
+class SymptomBigTable(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    medical_name: str
-    description: str | None = None
-    is_red_flag: bool | None = False
-    symmetricity: str | None = 'na'
-    progression: str
-    age_onset_group: str
-    media_path: str | None = None
-    tags: list[str]
+    symptom_medical_name: str
+    symptom_description: str | None
+    #symptom_is_red_flag: bool
+    #TODO: Enum validation should actually happen via pydantic models
+    symptom_symmetricity: str
+    symptom_progression: str
+    symptom_age_onset_group: str
+    symptom_media_path: str | None
+    #TODO: can tags be null?
+    symptom_tags: list[str] | None
 
-class CreateSymptom(BaseSymptom):
-    pass
-
-class ReadSymptom(BaseSymptom):
-    id: int
-
-class BaseDiseaseGroup(BaseModel):
+class DiseaseGroupBigTable(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    medical_name: str
-    summary_message: str
-    #accept ids or symptom names, or lists of them
+    disease_group_medical_name: str
+    disease_group_summary_message: str
+    test_ck_level: str
 
-class CreateDiseaseGroup(BaseDiseaseGroup):
-    pass
+class BaseBigTable(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
-class ReadDiseaseGroup(BaseDiseaseGroup):
+    symptom_medical_name: str
+    symptom_description: str | None
+    #symptom_is_red_flag: bool
+    #TODO: Enum validation should actually happen via pydantic models
+    symptom_symmetricity: str
+    symptom_progression: str
+    symptom_age_onset_group: str
+    symptom_media_path: str | None
+    #TODO: can tags be null?
+    symptom_tags: list[str] | None
+    disease_group_medical_name: str
+    disease_group_summary_message: str
+    test_ck_level: str
+
+class FullBigTable(BaseBigTable):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
-
-class CreateLinksSubmission(BaseModel):
-    symptom_id_list: list[int] | None = None
-    required_symptom_id_list: list[int] | None = None
-    excluding_symptom_id_list: list[int] | None = None
-
-class CreateLinks(CreateLinksSubmission):
-    disease_group_id: int
+    
