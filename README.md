@@ -1,7 +1,7 @@
 # CE-IT-Hub-Hackathon-2024
 
 ## Steps on windows to install WSL
-run wsl--install on admin terminal <br/>
+run wsl --install on admin terminal <br/>
 reboot your machine <br/>
 open ubuntu (executable) <br/>
 run sudo apt update
