@@ -3,14 +3,15 @@
 import asyncio
 
 from typing import Optional
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from io import BytesIO
 from app import schemas
 from app.crud import SymptomClient, DiseaseGroupClient, BigTableClient
 
 from .models import Base, OneBigTable
 from .db import engine, get_session, start_db
+import pandas as pd
 
 app = FastAPI(title="WUM Neurological disease tool backend")
 
@@ -57,3 +58,25 @@ async def get_table_entry(table_entry_id: int, db: AsyncSession = Depends(get_se
 async def post_table_entry(table_entry: schemas.BaseBigTable, db: AsyncSession = Depends(get_session)):
     client = BigTableClient(db)
     return await client.add_entry(table_entry)
+
+
+@app.post("/uploadfile/", response_model=dict)
+def create_upload_file(file: UploadFile, db: AsyncSession = Depends(get_session)):
+    contents = file.file.read()
+    buffer = BytesIO(contents)
+    df = pd.read_excel(buffer)
+    buffer.close()
+    file.file.close()
+
+    # statement = select(models.DiseaseGroup).filter(models.DiseaseGroup.id == disease_group_id)
+    #     result =  await _execute_statement(self.session, statement)
+    #     return result.first()
+
+    # async def create_disease_group(self, disease_group: schemas.CreateDiseaseGroup):
+    # new_disease_group = models.DiseaseGroup(**disease_group.model_dump())
+    # self.session.add(new_disease_group)
+    # await self.session.commit()
+    # await self.session.refresh(new_disease_group)
+    # return new_disease_group
+
+    return {"filename": file.filename, "columns": df.columns.to_list()}
