@@ -3,9 +3,6 @@ from sqlalchemy import select
 from fastapi import HTTPException
 from . import models, schemas
 
-async def _execute_statement(session: AsyncSession, statement):
-    return await session.execute(statement)
-
 class SymptomClient():
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -56,16 +53,14 @@ class BigTableClient():
         self.session = session
     async def get_table_entry(self, entry_id: int):
         statement = select(models.OneBigTable).filter(models.OneBigTable.id == entry_id)
-        result = await self.session.execute(statement)
-        x = [row._mapping for row in result.all()]
-        assert len(x)==1
-        return x[0]
+        result = await self.session.scalars(statement)
+        return result.first()
 
     async def list_table_entries(self, skip: int = 0, limit: int = 1000):
         statement = select(models.OneBigTable)
         statement = statement.offset(skip).limit(limit)
-        result = await self.session.execute(statement)
-        return [row._mapping for row in result.all()]
+        result = await self.session.scalars(statement)
+        return result.all()
 
     async def add_entry(self, entry: schemas.BaseBigTable):
         new_entry = models.OneBigTable(**entry.model_dump())
