@@ -43,7 +43,7 @@ async def get_disease_group(disease_group: str, db: AsyncSession = Depends(get_s
     client = DiseaseGroupClient(db)
     return await client.get_disease_group(disease_group)
 
-@app.get('/bigTable', response_model=None)#here there is an issue with the schema of the response list[schemas.FullBigTable]
+@app.get('/bigTable', response_model=None)# here there is an issue with the schema of the response list[schemas.FullBigTable]
 async def list_table_entries(db: AsyncSession = Depends(get_session)):
     client = BigTableClient(db)
     return await client.list_table_entries()
