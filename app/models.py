@@ -64,3 +64,9 @@ class OneBigTable(Base):
     disease_group_summary_message = Column(String(5000), nullable=False)
 
     test_ck_level = Column(Enum(CkLevelChoices), default="not_tested")
+
+class Symptoms(Base):
+    __tablename__ = "symptom"
+
+    id = Column(Integer, default=None, primary_key=True)
+    symptom_medical_name = Column(String(128), nullable=False)

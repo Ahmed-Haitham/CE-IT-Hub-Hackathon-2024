@@ -2,6 +2,18 @@ from pydantic import BaseModel, ConfigDict
 
 from .models import SymmetricityChoices, ProgressionChoices, OnsetChoices, CkLevelChoices
 
+
+
+class BaseSymptoms(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    symptom_medical_name: str
+
+class FullSymptoms(BaseSymptoms):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+
 class SymptomBigTable(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 

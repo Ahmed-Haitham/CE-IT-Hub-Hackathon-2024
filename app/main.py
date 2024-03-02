@@ -5,12 +5,14 @@ import asyncio
 from typing import Optional
 from fastapi import FastAPI, Depends, UploadFile
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.dialects.postgresql import insert
 from io import BytesIO
 from app import schemas
 from app.crud import SymptomClient, DiseaseGroupClient, BigTableClient
 
 from .models import Base, OneBigTable
 from .db import engine, get_session, start_db
+from .handlers.file_input_handler import read_xlsx_and_load_to_tables
 import pandas as pd
 
 app = FastAPI(title="WUM Neurological disease tool backend")
@@ -29,10 +31,15 @@ async def list_symptoms(distinct_only: bool = True, search_for: str | None = Non
     client = SymptomClient(db)
     return await client.list_symptoms(distinct_only, search_for)
 
-@app.get("/symptoms/{symptom}", response_model=schemas.SymptomBigTable)
-async def get_symptom(symptom_name: str, db: AsyncSession = Depends(get_session)):
+@app.get("/symptoms/{entry_id}", response_model=schemas.FullSymptoms)
+async def get_symptom(table_entry_id: int, db: AsyncSession = Depends(get_session)):
     client = SymptomClient(db)
-    return await client.get_symptom(symptom_name)
+    return await client.get_symptom(table_entry_id)
+
+@app.post('/symptoms', response_model=schemas.FullSymptoms)
+async def post_table_entry(table_entry: schemas.BaseSymptoms, db: AsyncSession = Depends(get_session)):
+    client = SymptomClient(db)
+    return await client.add_symptom(table_entry)
 
 @app.get("/diseaseGroups", response_model=list[schemas.DiseaseGroupBigTable])
 async def list_disease_groups(distinct_only: bool = True, search_for: str | None = None, db: AsyncSession = Depends(get_session)):
@@ -64,6 +71,7 @@ async def post_table_entry(table_entry: schemas.BaseBigTable, db: AsyncSession =
 def create_upload_file(file: UploadFile, db: AsyncSession = Depends(get_session)):
     contents = file.file.read()
     buffer = BytesIO(contents)
+    read_xlsx_and_load_to_tables(buffer)
     df = pd.read_excel(buffer)
     buffer.close()
     file.file.close()
