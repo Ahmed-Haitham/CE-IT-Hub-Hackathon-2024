@@ -1,7 +1,7 @@
 # Dockerfile
 
 # pull the official docker image
-FROM node:20.9
+FROM node:20.11.1-alpine
 
 # set work directory
 WORKDIR /front
