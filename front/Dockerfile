@@ -1,0 +1,20 @@
+# Dockerfile
+
+# pull the official docker image
+FROM node:20.9
+
+# set work directory
+WORKDIR /front
+
+COPY neuro/package.json ./
+
+# install dependencies
+RUN npm install
+
+# copy project - running from front context
+COPY . ./
+
+# set work directory
+WORKDIR /front/neuro
+
+CMD [ "npm", "start", "dev" ]
