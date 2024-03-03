@@ -23,6 +23,7 @@ from app.auth import (
     create_refresh_token,
     get_hashed_password,
     verify_password,
+    token_required,
 )
 
 app = FastAPI(title="WUM Neurological disease tool backend")
@@ -125,8 +126,8 @@ async def login(request: schemas.requestdetails, db: Session = Depends(get_sessi
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username"
         )
-    hashed_pass = user.password
-    if not verify_password(request.password, hashed_pass):
+
+    if not verify_password(request.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password"
         )
@@ -147,85 +148,69 @@ async def login(request: schemas.requestdetails, db: Session = Depends(get_sessi
 
 
 @app.get("/getusers")
+@token_required
 async def getusers(
     dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)
 ):
-    async with db.begin():
-        result = await db.execute(select(models.User))
-        return [jsonable_encoder(user) for user in result.scalars()]
+    result = await db.execute(select(models.User))
+    return [jsonable_encoder(user) for user in result.scalars()]
 
 
-# @app.post("/change-password")
-# def change_password(
-#     request: schemas.changepassword, db: Session = Depends(get_session)
-# ):
-#     user = db.query(models.User).filter(models.User.username == request.username).first()
-#     if user is None:
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST, detail="User not found"
-#         )
+@app.post("/change-password")
+async def change_password(
+    request: schemas.changepassword, db: Session = Depends(get_session)
+):
+    user = await db.scalar(
+        select(models.User).filter(models.User.username == request.username)
+    )
 
-#     if not verify_password(request.old_password, user.password):
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid old password"
-#         )
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User not found"
+        )
 
-#     encrypted_password = get_hashed_password(request.new_password)
-#     user.password = encrypted_password
-#     db.commit()
+    if not verify_password(request.old_password, user.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid old password"
+        )
 
-#     return {"message": "Password changed successfully"}
+    encrypted_password = get_hashed_password(request.new_password)
+    user.password = encrypted_password
+    await db.commit()
 
-
-# @app.post("/logout")
-# def logout(dependencies=Depends(JWTBearer()), db: Session = Depends(get_session)):
-#     token = dependencies
-#     payload = jwt.decode(token, JWT_SECRET_KEY, ALGORITHM)
-#     user_id = payload["sub"]
-#     token_record = db.query(models.TokenTable).all()
-#     info = []
-#     for record in token_record:
-#         print("record", record)
-#         if (datetime.utcnow() - record.created_date).days > 1:
-#             info.append(record.user_id)
-#     if info:
-#         existing_token = (
-#             db.query(models.TokenTable)
-#             .where(models.TokenTable.user_id.in_(info))
-#             .delete()
-#         )
-#         db.commit()
-
-#     existing_token = (
-#         db.query(models.TokenTable)
-#         .filter(
-#             models.TokenTable.user_id == user_id, models.TokenTable.access_token == token
-#         )
-#         .first()
-#     )
-#     if existing_token:
-#         existing_token.status = False
-#         db.add(existing_token)
-#         db.commit()
-#         db.refresh(existing_token)
-#     return {"message": "Logout Successfully"}
+    return {"message": "Password changed successfully"}
 
 
-# def token_required(func):
-#     @wraps(func)
-#     def wrapper(*args, **kwargs):
-#         payload = jwt.decode(kwargs["dependencies"], JWT_SECRET_KEY, ALGORITHM)
-#         user_id = payload["sub"]
-#         data = (
-#             kwargs["session"]
-#             .query(models.TokenTable)
-#             .filter_by(user_id=user_id, access_token=kwargs["dependencies"], status=True)
-#             .first()
-#         )
-#         if data:
-#             return func(kwargs["dependencies"], kwargs["session"])
+@app.post("/logout")
+def logout(dependencies=Depends(JWTBearer()), db: Session = Depends(get_session)):
+    token = dependencies
+    payload = jwt.decode(token, JWT_SECRET_KEY, ALGORITHM)
+    user_id = payload["sub"]
+    token_record = db.query(models.TokenTable).all()
+    info = []
+    for record in token_record:
+        print("record", record)
+        if (datetime.utcnow() - record.created_date).days > 1:
+            info.append(record.user_id)
+    if info:
+        existing_token = (
+            db.query(models.TokenTable)
+            .where(models.TokenTable.user_id.in_(info))
+            .delete()
+        )
+        db.commit()
 
-#         else:
-#             return {"msg": "Token blocked"}
-
-#     return wrapper
+    existing_token = (
+        db.query(models.TokenTable)
+        .filter(
+            models.TokenTable.user_id == user_id,
+            models.TokenTable.access_token == token,
+        )
+        .first()
+    )
+    if existing_token:
+        existing_token.status = False
+        db.add(existing_token)
+        db.commit()
+        db.refresh(existing_token)
+    return {"message": "Logout Successfully"}

@@ -1,13 +1,16 @@
 import os
 from datetime import datetime, timedelta
+from functools import wraps
 from typing import Any, Union
+
 from fastapi import HTTPException, Request
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-
 from jose import jwt
 from jwt.exceptions import JWTException
 from passlib.context import CryptContext
+from sqlalchemy import String, cast, select
 
+from app import models
 
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
@@ -93,6 +96,28 @@ class JWTBearer(HTTPBearer):
         if payload:
             isTokenValid = True
         return isTokenValid
+
+
+def token_required(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        payload = jwt.decode(kwargs["dependencies"], JWT_SECRET_KEY, ALGORITHM)
+        user_id = payload["sub"]
+        data = await kwargs["db"].execute(
+            select(models.TokenTable).filter(
+                cast(models.TokenTable.user_id, String) == str(user_id),
+                models.TokenTable.access_token == kwargs["dependencies"],
+                models.TokenTable.status is True,
+            )
+        )
+        if data:
+            x = await func(kwargs["dependencies"], kwargs["db"])
+            return x
+
+        else:
+            return {"msg": "Token blocked"}
+
+    return wrapper
 
 
 # jwt_bearer = JWTBearer()
