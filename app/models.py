@@ -69,4 +69,7 @@ class Symptoms(Base):
     __tablename__ = "symptom"
 
     id = Column(Integer, default=None, primary_key=True)
-    symptom_medical_name = Column(String(128), nullable=False)
+    symptom_medical_name = Column(String(999), nullable=False)
+    symptom_description = Column(String(5000))
+    symptom_media_path = Column(String(128))
+    symptom_tags = Column(ARRAY(String), nullable=True) # After development phase it shuld be nullable=False

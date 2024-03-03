@@ -26,8 +26,8 @@ async def startup_event():
 async def root():
     return {"message": "See /docs or /redoc for the API documentation"}
 
-@app.get("/symptoms", response_model=list[schemas.SymptomBigTable])
-async def list_symptoms(distinct_only: bool = True, search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+@app.get("/symptoms", response_model=list[schemas.FullSymptoms])
+async def list_symptoms(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
     client = SymptomClient(db)
     return await client.list_symptoms(distinct_only, search_for)
 
@@ -68,10 +68,10 @@ async def post_table_entry(table_entry: schemas.BaseBigTable, db: AsyncSession =
 
 
 @app.post("/uploadfile/", response_model=dict)
-def create_upload_file(file: UploadFile, db: AsyncSession = Depends(get_session)):
+async def create_upload_file(file: UploadFile, db: AsyncSession = Depends(get_session)):
     contents = file.file.read()
     buffer = BytesIO(contents)
-    read_xlsx_and_load_to_tables(buffer)
+    await read_xlsx_and_load_to_tables(buffer, db)
     df = pd.read_excel(buffer)
     buffer.close()
     file.file.close()
