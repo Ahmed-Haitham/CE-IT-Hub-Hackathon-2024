@@ -18,12 +18,13 @@ services:
       timeout: 5s
       retries: 5
   api:
-    environment:
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      JWT_REFRESH_SECRET_KEY: ${JWT_REFRESH_SECRET_KEY}
+
     build:
       context: app
       dockerfile: Dockerfile
+      args:
+        JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+        JWT_REFRESH_SECRET_KEY: ${JWT_REFRESH_SECRET_KEY}
     depends_on:
       db:
         condition: service_healthy

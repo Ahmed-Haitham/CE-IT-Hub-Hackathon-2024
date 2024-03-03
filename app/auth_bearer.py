@@ -9,8 +9,8 @@ from jwt.exceptions import JWTException
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 ALGORITHM = "HS256"
-JWT_SECRET_KEY = "test"
-JWT_REFRESH_SECRET_KEY = "test"
+JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+JWT_REFRESH_SECRET_KEY = os.environ.get("JWT_REFRESH_SECRET_KEY")
 # TODO: remove hardcoding of secret
 
 
