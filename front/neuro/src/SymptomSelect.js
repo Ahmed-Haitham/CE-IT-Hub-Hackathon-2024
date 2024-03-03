@@ -44,7 +44,7 @@ export default function SymptomSelection() {
           setSelectedOptions(newValue);
         }}
         renderInput={(params) => (
-          <TextField {...params} label="Symptoms" placeholder="Ptosis" />
+          <TextField {...params} label="Symptoms" placeholder="Type a symptom" />
         )}
         sx={{ width: '95%' }}
       />
