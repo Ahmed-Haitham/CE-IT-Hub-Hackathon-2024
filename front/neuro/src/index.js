@@ -1,13 +1,44 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import Header from './Header';
+import AssessmentDivider from './AssessmentDivider';
+import Assessment from './ActorAssessment';
+import SymptomSelection from './SymptomSelect';
+import FinalQuestions from './FinalQuestions';
+import SendAssessment from './EndAssessment';
+import Steps from './Footer';
 import reportWebVitals from './reportWebVitals';
+
+import { createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    ochre: {
+      main: '#E3D026',
+      light: '#E9DB5D',
+      dark: '#A29415',
+      contrastText: '#242105',
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+    <Header />
+    <AssessmentDivider text="Do the assessment as" />
+    <Assessment />
+    <AssessmentDivider text="Which symptoms are present?" />
+    <SymptomSelection />
+    <AssessmentDivider text="Now provide final details" />
+    <FinalQuestions />
+    <AssessmentDivider text="Are you ready to submit?" />
+    <SendAssessment />
+    <Steps />
+    </ThemeProvider>
   </React.StrictMode>
 );
 
