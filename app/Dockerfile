@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 # copy project - running from app context
 COPY . .
 
-CMD [ "uvicorn", "app.main:app", "--host", "0.0.0.0" ]
+CMD [ "uvicorn", "app.main:app", "--host", "0.0.0.0", "--reload" ]

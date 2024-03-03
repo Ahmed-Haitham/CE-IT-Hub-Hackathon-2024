@@ -1,7 +1,8 @@
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, distinct
-from fastapi import HTTPException
+
 from . import models, schemas
+
 
 class SymptomClient():
     def __init__(self, session: AsyncSession):
