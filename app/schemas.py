@@ -1,20 +1,58 @@
+import datetime
+
 from pydantic import BaseModel, ConfigDict
 
-from .models import SymmetricityChoices, ProgressionChoices, OnsetChoices, CkLevelChoices
+from .models import (
+    CkLevelChoices,
+    OnsetChoices,
+    ProgressionChoices,
+    SymmetricityChoices,
+)
+
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+
+class requestdetails(BaseModel):
+    username: str
+    password: str
+
+
+class TokenSchema(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
+class changepassword(BaseModel):
+    username: str
+    old_password: str
+    new_password: str
+
+
+class TokenCreate(BaseModel):
+    user_id: str
+    access_token: str
+    refresh_token: str
+    status: bool
+    created_date: datetime.datetime
+
 
 class SymptomBigTable(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     symptom_medical_name: str
     symptom_description: str | None
-    #symptom_is_red_flag: bool
-    #TODO: Enum validation should actually happen via pydantic models
+    # symptom_is_red_flag: bool
+    # TODO: Enum validation should actually happen via pydantic models
     symptom_symmetricity: str
     symptom_progression: str
     symptom_age_onset_group: str
     symptom_media_path: str | None
-    #TODO: can tags be null?
+    # TODO: can tags be null?
     symptom_tags: list[str] | None
+
 
 class DiseaseGroupBigTable(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -23,18 +61,19 @@ class DiseaseGroupBigTable(BaseModel):
     disease_group_summary_message: str
     test_ck_level: str
 
+
 class BaseBigTable(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     symptom_medical_name: str
     symptom_description: str | None
-    #symptom_is_red_flag: bool
-    #TODO: Enum validation should actually happen via pydantic models
+    # symptom_is_red_flag: bool
+    # TODO: Enum validation should actually happen via pydantic models
     symptom_symmetricity: str
     symptom_progression: str
     symptom_age_onset_group: str
     symptom_media_path: str | None
-    #TODO: can tags be null?
+    # TODO: can tags be null?
     symptom_tags: list[str] | None
     disease_group_medical_name: str
     disease_group_summary_message: str
