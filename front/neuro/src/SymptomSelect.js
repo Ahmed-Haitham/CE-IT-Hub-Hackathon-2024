@@ -52,7 +52,7 @@ export default function SymptomSelection() {
       <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '1em' }}>
         <List>
           <Grid container spacing={3}>
-            <Grid item xs={3}><strong>List Entry</strong></Grid>
+            <Grid item xs={3}><strong>Symptom</strong></Grid>
             <Grid item xs={3}><strong>Symptom Progression</strong></Grid>
             <Grid item xs={3}><strong>Symptom Symmetricity</strong></Grid>
             <Grid item xs={3}><strong>In Family History</strong></Grid>
