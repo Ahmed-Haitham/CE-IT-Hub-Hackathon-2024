@@ -29,7 +29,7 @@ async def root():
 @app.get("/symptoms", response_model=list[schemas.FullSymptoms])
 async def list_symptoms(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
     client = SymptomClient(db)
-    return await client.list_symptoms(distinct_only, search_for)
+    return await client.list_symptoms(search_for)
 
 @app.get("/symptoms/{entry_id}", response_model=schemas.FullSymptoms)
 async def get_symptom(table_entry_id: int, db: AsyncSession = Depends(get_session)):

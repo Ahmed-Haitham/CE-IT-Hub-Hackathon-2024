@@ -8,7 +8,7 @@ class BaseSymptoms(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     symptom_medical_name: str
-    symptom_description: str
+    symptom_description: str | None
 
 class FullSymptoms(BaseSymptoms):
     model_config = ConfigDict(from_attributes=True)
