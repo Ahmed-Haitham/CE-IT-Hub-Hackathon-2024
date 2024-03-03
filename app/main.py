@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import insert
 from io import BytesIO
 from app import schemas
-from app.crud import SymptomClient, DiseaseGroupClient, BigTableClient
+from app.crud import SymptomClient, DiseaseGroupClient, SymmetricityClient, ProgressionClient, OnsetGroupClient, BigTableClient, TestCkLevelClient
 
 from .models import Base, OneBigTable
 from .db import engine, get_session, start_db
@@ -31,7 +31,7 @@ async def list_symptoms(search_for: str | None = None, db: AsyncSession = Depend
     client = SymptomClient(db)
     return await client.list_symptoms(search_for)
 
-@app.get("/symptoms/{entry_id}", response_model=schemas.FullSymptoms)
+@app.get("/symptoms/{symptom_id}", response_model=schemas.FullSymptoms)
 async def get_symptom(table_entry_id: int, db: AsyncSession = Depends(get_session)):
     client = SymptomClient(db)
     return await client.get_symptom(table_entry_id)
@@ -41,15 +41,55 @@ async def post_table_entry(table_entry: schemas.BaseSymptoms, db: AsyncSession =
     client = SymptomClient(db)
     return await client.add_symptom(table_entry)
 
-@app.get("/diseaseGroups", response_model=list[schemas.DiseaseGroupBigTable])
-async def list_disease_groups(distinct_only: bool = True, search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+@app.get("/diseaseGroups", response_model=list[schemas.FullDiseaseGroup])
+async def list_disease_groups(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
     client = DiseaseGroupClient(db)
-    return await client.list_disease_groups(distinct_only, search_for)
+    return await client.list_disease_groups(search_for)
 
-@app.get("/diseaseGroups/{disease_group}", response_model=schemas.DiseaseGroupBigTable)
-async def get_disease_group(disease_group: str, db: AsyncSession = Depends(get_session)):
+@app.get("/diseaseGroups/{disease_group_id}", response_model=schemas.FullDiseaseGroup)
+async def get_disease_group(table_entry_id: int, db: AsyncSession = Depends(get_session)):
     client = DiseaseGroupClient(db)
-    return await client.get_disease_group(disease_group)
+    return await client.get_disease_group(table_entry_id)
+
+@app.get("/symmetricity", response_model=list[schemas.FullSymmetricity])
+async def list_symmetricities(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+    client = SymmetricityClient(db)
+    return await client.list_symmetricities(search_for)
+
+@app.get("/symmetricity/{symmetricity_id}", response_model=schemas.FullSymmetricity)
+async def get_symmetricity(table_entry_id: int, db: AsyncSession = Depends(get_session)):
+    client = SymmetricityClient(db)
+    return await client.get_symmetricity(table_entry_id)
+
+@app.get("/progression", response_model=list[schemas.FullProgression])
+async def list_progressions(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+    client = ProgressionClient(db)
+    return await client.list_progressions(search_for)
+
+@app.get("/progression/{progression_id}", response_model=schemas.FullProgression)
+async def get_progression(table_entry_id: int, db: AsyncSession = Depends(get_session)):
+    client = ProgressionClient(db)
+    return await client.get_progression(table_entry_id)
+
+@app.get("/onset_group", response_model=list[schemas.FullOnsetGroup])
+async def list_onset_groups(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+    client = OnsetGroupClient(db)
+    return await client.list_onset_groups(search_for)
+
+@app.get("/onset_group/{onset_group_id}", response_model=schemas.FullOnsetGroup)
+async def get_onset_group(table_entry_id: int, db: AsyncSession = Depends(get_session)):
+    client = OnsetGroupClient(db)
+    return await client.get_onset_group(table_entry_id)
+
+@app.get("/test_ck_level", response_model=list[schemas.FullTestCkLevel])
+async def list_test_ck_levels(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+    client = TestCkLevelClient(db)
+    return await client.list_test_ck_levels(search_for)
+
+@app.get("/test_ck_level/{test_ck_level_id}", response_model=schemas.FullTestCkLevel)
+async def test_ck_level(table_entry_id: int, db: AsyncSession = Depends(get_session)):
+    client = TestCkLevelClient(db)
+    return await client.test_ck_level(table_entry_id)
 
 @app.get('/bigTable', response_model=list[schemas.FullBigTable])# here there is an issue with the schema of the response 
 async def list_table_entries(db: AsyncSession = Depends(get_session)):

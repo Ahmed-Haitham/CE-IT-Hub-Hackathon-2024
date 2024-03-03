@@ -21,6 +21,7 @@ class SymptomClient():
             )
         statement = statement.offset(skip).limit(limit)
         result = await self.session.scalars(statement)
+        result.unique()
         return result.all()
     
     async def add_symptom(self, entry: schemas.BaseSymptoms):
@@ -34,7 +35,7 @@ class SymptomClient():
         
         model = models.Symptoms
         table_instance = Base.metadata.tables[model.__tablename__]
-        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY CASCADE")
         await self.session.execute(truncate_statement)
         await self.session.commit()
         stmt = insert(model).values(data)
@@ -46,26 +47,177 @@ class SymptomClient():
 class DiseaseGroupClient():
     def __init__(self, session: AsyncSession):
         self.session = session
-    async def get_disease_group(self, disease_group_name: str):
-        statement = select(models.OneBigTable.disease_group_medical_name, models.OneBigTable.disease_group_summary_message, models.OneBigTable.test_ck_level).filter(models.OneBigTable.disease_group_medical_name == disease_group_name)
-        statement = statement.distinct()
-        result =  await self.session.execute(statement)
-        x = [row._mapping for row in result.all()]
-        assert len(x)==1
-        return x[0]
+    async def get_disease_group(self, entry_id: int):
+        statement = select(models.DiseaseGroup).filter(models.DiseaseGroup.id == entry_id)
+        result = await self.session.scalars(statement)
+        return result.first()
 
-    async def list_disease_groups(self, distinct_only, search_for: str, skip: int = 0, limit: int = 1000):
-        statement = select(models.OneBigTable.disease_group_medical_name, models.OneBigTable.disease_group_summary_message, models.OneBigTable.test_ck_level)
-        if distinct_only:
-            statement = statement.distinct()
+    async def list_disease_groups(self, search_for: str, skip: int = 0, limit: int = 1000):
+        statement = select(models.DiseaseGroup)
         if search_for:
             statement = statement.filter(
-                models.OneBigTable.disease_group_medical_name.ilike('%' + search_for + '%')
-                )
+                models.DiseaseGroup.disease_group_medical_name.ilike('%' + search_for + '%')
+            )
         statement = statement.offset(skip).limit(limit)
-        result = await self.session.execute(statement)
-        x = [row._mapping for row in result.all()]
-        return x
+        result = await self.session.scalars(statement)
+        result.unique()
+        return result.all()
+    
+    async def populate_to_table(self, data):
+        
+        model = models.DiseaseGroup
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY CASCADE")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"  
+
+
+class SymptomsDiseaseGroupClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def populate_to_table(self, data):
+        
+        model = models.SymptomsDiseaseGroup
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"  
+
+class SymmetricityClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def get_symmericity(self, entry_id: int):
+        statement = select(models.Symmetricity).filter(models.Symmetricity.id == entry_id)
+        result = await self.session.scalars(statement)
+        return result.first()
+        
+    async def list_symmetricities(self, search_for: str, skip: int = 0, limit: int = 1000):
+        statement = select(models.Symmetricity)
+        if search_for:
+            statement = statement.filter(
+                models.Symmetricity.symmetricity_name.ilike('%' + search_for + '%')
+            )
+        statement = statement.offset(skip).limit(limit)
+        result = await self.session.scalars(statement)
+        return result.all()
+    
+    async def populate_to_table(self, data):
+        
+        model = models.Symmetricity
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"
+
+
+class ProgressionClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def get_progression(self, entry_id: int):
+        statement = select(models.Progression).filter(models.Progression.id == entry_id)
+        result = await self.session.scalars(statement)
+        return result.first()
+        
+    async def list_progressions(self, search_for: str, skip: int = 0, limit: int = 1000):
+        statement = select(models.Progression)
+        if search_for:
+            statement = statement.filter(
+                models.Progression.symptom_medical_name.ilike('%' + search_for + '%')
+            )
+        statement = statement.offset(skip).limit(limit)
+        result = await self.session.scalars(statement)
+        return result.all()
+    
+    async def populate_to_table(self, data):
+        
+        model = models.Progression
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"
+
+
+class OnsetGroupClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def get_onset_group(self, entry_id: int):
+        statement = select(models.OnsetGroup).filter(models.OnsetGroup.id == entry_id)
+        result = await self.session.scalars(statement)
+        return result.first()
+        
+    async def list_onset_groups(self, search_for: str, skip: int = 0, limit: int = 1000):
+        statement = select(models.OnsetGroup)
+        if search_for:
+            statement = statement.filter(
+                models.OnsetGroup.onset_group_name.ilike('%' + search_for + '%')
+            )
+        statement = statement.offset(skip).limit(limit)
+        result = await self.session.scalars(statement)
+        return result.all()
+    
+    async def populate_to_table(self, data):
+        
+        model = models.OnsetGroup
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"
+
+
+class TestCkLevelClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def get_test_ck_level(self, entry_id: int):
+        statement = select(models.TestCkLevel).filter(models.TestCkLevel.id == entry_id)
+        result = await self.session.scalars(statement)
+        return result.first()
+        
+    async def list_test_ck_levels(self, search_for: str, skip: int = 0, limit: int = 1000):
+        statement = select(models.TestCkLevel)
+        if search_for:
+            statement = statement.filter(
+                models.TestCkLevel.test_ck_level_name.ilike('%' + search_for + '%')
+            )
+        statement = statement.offset(skip).limit(limit)
+        result = await self.session.scalars(statement)
+        return result.all()
+    
+    async def populate_to_table(self, data):
+        
+        model = models.TestCkLevel
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"
 
 
 class BigTableClient():

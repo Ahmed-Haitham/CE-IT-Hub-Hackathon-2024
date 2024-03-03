@@ -1,7 +1,8 @@
 import enum
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Enum, Table
+from typing import List
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Enum, Table, UniqueConstraint
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 from .db import Base
 
 class SymmetricityChoices(enum.Enum):
@@ -69,7 +70,53 @@ class Symptoms(Base):
     __tablename__ = "symptom"
 
     id = Column(Integer, default=None, primary_key=True)
-    symptom_medical_name = Column(String(999), nullable=False)
+    symptom_medical_name = Column(String(999), nullable=False, unique=True)
     symptom_description = Column(String(5000))
     symptom_media_path = Column(String(128))
     symptom_tags = Column(ARRAY(String), nullable=True) # After development phase it shuld be nullable=False
+    disease_group = relationship('DiseaseGroup', back_populates="associated_symptoms", secondary="symptoms_disease_group", lazy="joined")
+
+
+class DiseaseGroup(Base):
+    __tablename__ = "disease_group"
+
+    id = Column(Integer, default=None, primary_key=True)
+    disease_group_medical_name = Column(String(999), nullable=False, unique=True)
+    disease_group_summary = Column(String(5000))
+    associated_symptoms = relationship('Symptoms', back_populates="disease_group", secondary="symptoms_disease_group", lazy="joined")
+
+
+class SymptomsDiseaseGroup(Base):
+    __tablename__ = "symptoms_disease_group"
+
+    id = Column(Integer, default=None, primary_key=True)
+    symptom_id = Column(String(999), ForeignKey("symptom.symptom_medical_name"))
+    disease_group_id = Column(String(999), ForeignKey("disease_group.disease_group_medical_name"))
+
+
+class Symmetricity(Base):
+    __tablename__ = "symmetricity"
+
+    id = Column(Integer, default=None, primary_key=True)
+    symmetricity_name = Column(String(999), nullable=False)
+
+
+class Progression(Base):
+    __tablename__ = "progression"
+
+    id = Column(Integer, default=None, primary_key=True)
+    progression_name = Column(String(999), nullable=False)
+
+
+class OnsetGroup(Base):
+    __tablename__ = "onset_group"
+
+    id = Column(Integer, default=None, primary_key=True)
+    onset_group_name = Column(String(999), nullable=False)
+
+
+class TestCkLevel(Base):
+    __tablename__ = "test_ck_level"
+
+    id = Column(Integer, default=None, primary_key=True)
+    test_ck_level_name = Column(String(999), nullable=False)
