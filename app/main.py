@@ -15,10 +15,10 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql import select
 
 from app import models, schemas
-from app.auth_bearer import JWTBearer
 from app.crud import BigTableClient, DiseaseGroupClient, SymptomClient
 from app.db import engine, get_session, start_db
-from app.utils import (
+from app.auth import (
+    JWTBearer,
     create_access_token,
     create_refresh_token,
     get_hashed_password,
