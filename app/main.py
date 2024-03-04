@@ -1,31 +1,31 @@
 # app/main.py
 
 from datetime import datetime
-from functools import wraps
 from io import BytesIO
 
-import jwt
 import pandas as pd
 from fastapi import Depends, FastAPI, HTTPException, UploadFile, status
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import String, cast, delete, select
 
 # TODO: move sqlalchemy related code to crud/models
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
-from sqlalchemy.sql import select
 
 from app import models, schemas
-from app.auth_bearer import JWTBearer
-from app.crud import BigTableClient, DiseaseGroupClient, SymptomClient
-from app.db import engine, get_session, start_db
-from app.utils import (
+from app.auth import (
+    JWTBearer,
     create_access_token,
     create_refresh_token,
+    decodeJWT,
     get_hashed_password,
+    token_required,
     verify_password,
 )
+from app.crud import BigTableClient, DiseaseGroupClient, SymptomClient
+from app.db import engine, get_session, start_db
 
 app = FastAPI(title="WUM Neurological disease tool backend")
+
 
 #This won't be required in production, as the db will be persistent
 @app.on_event("startup")
@@ -73,7 +73,8 @@ async def post_table_entry(table_entry: schemas.BaseBigTable, db: AsyncSession =
 
 
 @app.post("/uploadfile/", response_model=dict)
-def create_upload_file(file: UploadFile, db: AsyncSession = Depends(get_session)):
+@token_required
+def create_upload_file(file: UploadFile, dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)):
     contents = file.file.read()
     buffer = BytesIO(contents)
     df = pd.read_excel(buffer)
@@ -116,7 +117,9 @@ async def register_user(
 
 
 @app.post("/login", response_model=schemas.TokenSchema)
-async def login(request: schemas.requestdetails, db: Session = Depends(get_session)):
+async def login(
+    request: schemas.requestdetails, db: AsyncSession = Depends(get_session)
+):
     user = await db.scalar(
         select(models.User).filter(models.User.username == request.username)
     )
@@ -125,8 +128,8 @@ async def login(request: schemas.requestdetails, db: Session = Depends(get_sessi
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username"
         )
-    hashed_pass = user.password
-    if not verify_password(request.password, hashed_pass):
+
+    if not verify_password(request.password, user.password):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password"
         )
@@ -147,85 +150,56 @@ async def login(request: schemas.requestdetails, db: Session = Depends(get_sessi
 
 
 @app.get("/getusers")
+@token_required
 async def getusers(
     dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)
 ):
-    async with db.begin():
-        result = await db.execute(select(models.User))
-        return [jsonable_encoder(user) for user in result.scalars()]
+    result = await db.execute(select(models.User))
+    return [jsonable_encoder(user) for user in result.scalars()]
 
 
-# @app.post("/change-password")
-# def change_password(
-#     request: schemas.changepassword, db: Session = Depends(get_session)
-# ):
-#     user = db.query(models.User).filter(models.User.username == request.username).first()
-#     if user is None:
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST, detail="User not found"
-#         )
+@app.post("/change-password")
+@token_required
+async def change_password(
+    request: schemas.changepassword,
+    dependencies=Depends(JWTBearer()),
+    db: AsyncSession = Depends(get_session),
+):
+    user = await db.scalar(
+        select(models.User).filter(models.User.username == request.username)
+    )
 
-#     if not verify_password(request.old_password, user.password):
-#         raise HTTPException(
-#             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid old password"
-#         )
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="User not found"
+        )
 
-#     encrypted_password = get_hashed_password(request.new_password)
-#     user.password = encrypted_password
-#     db.commit()
+    if not verify_password(request.old_password, user.password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid old password"
+        )
 
-#     return {"message": "Password changed successfully"}
+    encrypted_password = get_hashed_password(request.new_password)
+    user.password = encrypted_password
+    await db.commit()
 
+    return {"message": "Password changed successfully"}
 
-# @app.post("/logout")
-# def logout(dependencies=Depends(JWTBearer()), db: Session = Depends(get_session)):
-#     token = dependencies
-#     payload = jwt.decode(token, JWT_SECRET_KEY, ALGORITHM)
-#     user_id = payload["sub"]
-#     token_record = db.query(models.TokenTable).all()
-#     info = []
-#     for record in token_record:
-#         print("record", record)
-#         if (datetime.utcnow() - record.created_date).days > 1:
-#             info.append(record.user_id)
-#     if info:
-#         existing_token = (
-#             db.query(models.TokenTable)
-#             .where(models.TokenTable.user_id.in_(info))
-#             .delete()
-#         )
-#         db.commit()
+# TODO: fix issue in logout
+@app.post("/logout")
+@token_required
+async def logout(
+    dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)
+):
+    token = dependencies
+    payload = decodeJWT(token)
+    user_id = payload["sub"]
 
-#     existing_token = (
-#         db.query(models.TokenTable)
-#         .filter(
-#             models.TokenTable.user_id == user_id, models.TokenTable.access_token == token
-#         )
-#         .first()
-#     )
-#     if existing_token:
-#         existing_token.status = False
-#         db.add(existing_token)
-#         db.commit()
-#         db.refresh(existing_token)
-#     return {"message": "Logout Successfully"}
+    await db.execute(
+        delete(models.TokenTable).where(
+            cast(models.TokenTable.user_id, String) == str(user_id),
+        )
+    )
+    await db.commit()
 
-
-# def token_required(func):
-#     @wraps(func)
-#     def wrapper(*args, **kwargs):
-#         payload = jwt.decode(kwargs["dependencies"], JWT_SECRET_KEY, ALGORITHM)
-#         user_id = payload["sub"]
-#         data = (
-#             kwargs["session"]
-#             .query(models.TokenTable)
-#             .filter_by(user_id=user_id, access_token=kwargs["dependencies"], status=True)
-#             .first()
-#         )
-#         if data:
-#             return func(kwargs["dependencies"], kwargs["session"])
-
-#         else:
-#             return {"msg": "Token blocked"}
-
-#     return wrapper
+    return {"message": "Logout Successfully"}
