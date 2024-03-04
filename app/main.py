@@ -1,32 +1,31 @@
 # app/main.py
 
 from datetime import datetime
-from functools import wraps
 from io import BytesIO
 
-import jwt
 import pandas as pd
 from fastapi import Depends, FastAPI, HTTPException, UploadFile, status
 from fastapi.encoders import jsonable_encoder
+from sqlalchemy import String, cast, delete, select
 
 # TODO: move sqlalchemy related code to crud/models
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Session
-from sqlalchemy.sql import select
 
 from app import models, schemas
-from app.crud import BigTableClient, DiseaseGroupClient, SymptomClient
-from app.db import engine, get_session, start_db
 from app.auth import (
     JWTBearer,
     create_access_token,
     create_refresh_token,
+    decodeJWT,
     get_hashed_password,
-    verify_password,
     token_required,
+    verify_password,
 )
+from app.crud import BigTableClient, DiseaseGroupClient, SymptomClient
+from app.db import engine, get_session, start_db
 
 app = FastAPI(title="WUM Neurological disease tool backend")
+
 
 #This won't be required in production, as the db will be persistent
 @app.on_event("startup")
@@ -118,7 +117,9 @@ async def register_user(
 
 
 @app.post("/login", response_model=schemas.TokenSchema)
-async def login(request: schemas.requestdetails, db: Session = Depends(get_session)):
+async def login(
+    request: schemas.requestdetails, db: AsyncSession = Depends(get_session)
+):
     user = await db.scalar(
         select(models.User).filter(models.User.username == request.username)
     )
@@ -158,8 +159,11 @@ async def getusers(
 
 
 @app.post("/change-password")
+@token_required
 async def change_password(
-    request: schemas.changepassword, db: Session = Depends(get_session)
+    request: schemas.changepassword,
+    dependencies=Depends(JWTBearer()),
+    db: AsyncSession = Depends(get_session),
 ):
     user = await db.scalar(
         select(models.User).filter(models.User.username == request.username)
@@ -181,37 +185,21 @@ async def change_password(
 
     return {"message": "Password changed successfully"}
 
-
+# TODO: fix issue in logout
 @app.post("/logout")
-def logout(dependencies=Depends(JWTBearer()), db: Session = Depends(get_session)):
+@token_required
+async def logout(
+    dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)
+):
     token = dependencies
-    payload = jwt.decode(token, JWT_SECRET_KEY, ALGORITHM)
+    payload = decodeJWT(token)
     user_id = payload["sub"]
-    token_record = db.query(models.TokenTable).all()
-    info = []
-    for record in token_record:
-        print("record", record)
-        if (datetime.utcnow() - record.created_date).days > 1:
-            info.append(record.user_id)
-    if info:
-        existing_token = (
-            db.query(models.TokenTable)
-            .where(models.TokenTable.user_id.in_(info))
-            .delete()
-        )
-        db.commit()
 
-    existing_token = (
-        db.query(models.TokenTable)
-        .filter(
-            models.TokenTable.user_id == user_id,
-            models.TokenTable.access_token == token,
+    await db.execute(
+        delete(models.TokenTable).where(
+            cast(models.TokenTable.user_id, String) == str(user_id),
         )
-        .first()
     )
-    if existing_token:
-        existing_token.status = False
-        db.add(existing_token)
-        db.commit()
-        db.refresh(existing_token)
+    await db.commit()
+
     return {"message": "Logout Successfully"}
