@@ -41,7 +41,9 @@ export default function SymptomSelection() {
 
   return (
     <Box sx={{ padding: '0 2em', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-      {/*Seacrhable, scrollable dropdown with autocomplete and delete chips*/}
+      {/*Seacrhable, scrollable dropdown with autocomplete and delete chips
+      can be enhanced to send requests after typing to search by tags as well
+      https://mui.com/material-ui/react-autocomplete/#google-maps-place*/}
       <Autocomplete
         multiple
         limitTags={2}
@@ -52,6 +54,25 @@ export default function SymptomSelection() {
         value={selectedOptions}
         onChange={(event, newValue) => {
           setSelectedOptions(newValue);
+        }}
+        filterOptions={(options, params) => {
+          const filtered = options.filter((option) => {
+            /*Untested, search by tags in response
+            const tagsMatch = option.tags.some((tag) =>
+              tag.toLowerCase().includes(params.inputValue.toLowerCase())
+            );
+            */
+            const bodyMatch = option.body
+              .toLowerCase()
+              .includes(params.inputValue.toLowerCase());
+            const titleMatch = option.title
+              .toLowerCase()
+              .includes(params.inputValue.toLowerCase());
+            return bodyMatch || titleMatch;
+            //turn tags search instead of body
+            //return tagsMatch || titleMatch;
+          });
+          return filtered;
         }}
         renderInput={(params) => (
           <TextField {...params} label="Symptoms" placeholder="Type a symptom" />
