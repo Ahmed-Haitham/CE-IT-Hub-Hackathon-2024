@@ -29,6 +29,16 @@ export default function SymptomSelection() {
     setSelectedOptions((options) => options.filter((option) => option.title !== optionToDelete.title));
   };
 
+  async function getPosts() {
+    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+    const data = await response.json();
+    return data;
+  }  
+  const [posts, setPosts] = React.useState([]);
+  React.useEffect(() => {
+    getPosts().then(data => setPosts(data));
+  }, []);
+
   return (
     <Box sx={{ padding: '0 2em', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
       {/*Seacrhable, scrollable dropdown with autocomplete and delete chips*/}
@@ -36,7 +46,7 @@ export default function SymptomSelection() {
         multiple
         limitTags={2}
         id="symptom-dropdown"
-        options={top100Films}
+        options={posts}
         getOptionLabel={(option) => option.title}
         defaultValue={[]}
         value={selectedOptions}
@@ -142,27 +152,3 @@ export default function SymptomSelection() {
     </Box>
   );
 }
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
-const top100Films = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: 'Pulp Fiction', year: 1994 },
-  {
-    title: 'The Lord of the Rings: The Return of the King',
-    year: 2003,
-  },
-  { title: 'The Good, the Bad and the Ugly', year: 1966 },
-  { title: 'Fight Club', year: 1999 },
-  {
-    title: 'The Lord of the Rings: The Fellowship of the Ring',
-    year: 2001,
-  },
-  {
-    title: 'Star Wars: Episode V - The Empire Strikes Back',
-    year: 1980,
-  }
-];
