@@ -8,6 +8,7 @@ WORKDIR /front
 
 COPY neuro/package.json ./
 
+RUN npm config set strict-ssl false
 # install dependencies
 RUN npm install
 
