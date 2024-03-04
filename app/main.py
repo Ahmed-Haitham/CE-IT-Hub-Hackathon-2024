@@ -7,6 +7,7 @@ import pandas as pd
 from fastapi import Depends, FastAPI, HTTPException, UploadFile, status
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import String, cast, delete, select
+from fastapi.middleware.cors import CORSMiddleware
 
 # TODO: move sqlalchemy related code to crud/models
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,6 +27,18 @@ from app.db import engine, get_session, start_db
 
 app = FastAPI(title="WUM Neurological disease tool backend")
 
+origins = [
+    "http://localhost:3000",
+    "http://front:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 #This won't be required in production, as the db will be persistent
 @app.on_event("startup")

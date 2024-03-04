@@ -29,14 +29,16 @@ export default function SymptomSelection() {
     setSelectedOptions((options) => options.filter((option) => option.title !== optionToDelete.title));
   };
 
-  async function getPosts() {
-    const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+  async function getList() {
+    const response = await fetch('http://localhost:8000/symptoms?distinct_only=true');
+    // this works but the above does not: NetworkError when attempting to fetch resource.
+    // const response = await fetch('https://jsonplaceholder.typicode.com/posts');
     const data = await response.json();
     return data;
   }  
-  const [posts, setPosts] = React.useState([]);
+  const [list_items, setListItems] = React.useState([]);
   React.useEffect(() => {
-    getPosts().then(data => setPosts(data));
+    getList().then(data => setListItems(data));
   }, []);
 
   return (
@@ -48,7 +50,7 @@ export default function SymptomSelection() {
         multiple
         limitTags={2}
         id="symptom-dropdown"
-        options={posts}
+        options={list_items}
         getOptionLabel={(option) => option.title}
         defaultValue={[]}
         value={selectedOptions}
