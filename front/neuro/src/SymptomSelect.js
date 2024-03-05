@@ -8,26 +8,10 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 export default function SymptomSelection() {
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
-  const [selected_progression, setSelectedProgression] = React.useState('stable');
-  const [selected_symmetricity, setSelectedSymmetricity] = React.useState('na');
-  const [selected_family_history, setSelectedFamilyHistory] = React.useState(false);
+  const [selected_progression, setSelectedProgression] = React.useState([]);
+  const [selected_symmetricity, setSelectedSymmetricity] = React.useState([]);
+  const [selected_family_history, setSelectedFamilyHistory] = React.useState([]);
   const [selectedOptions, setSelectedOptions] = React.useState([]);
-
-  const handleProgressionToggle = (value) => () => {
-    setSelectedProgression(value);
-  };
-
-  const handleSymmetricityToggle = (value) => () => {
-    setSelectedSymmetricity(value);
-  };
-
-  const familyHistoryToggle = (event) => {
-    setSelectedFamilyHistory(event.target.checked);
-  };
-
-  const handleDelete = (optionToDelete) => () => {
-    setSelectedOptions((options) => options.filter((option) => option.symptom_medical_name !== optionToDelete.symptom_medical_name));
-  };
 
   async function getList() {
     const response = await fetch('http://localhost:8000/symptoms?distinct_only=true');
@@ -38,6 +22,46 @@ export default function SymptomSelection() {
   React.useEffect(() => {
     getList().then(data => setListItems(data));
   }, []);
+
+  React.useEffect(() => {
+    setSelectedProgression(new Array(selectedOptions.length).fill('stable'));
+  }, [selectedOptions]);
+
+  React.useEffect(() => {
+    setSelectedSymmetricity(new Array(selectedOptions.length).fill('na'));
+  }, [selectedOptions]);
+
+  React.useEffect(() => {
+    setSelectedFamilyHistory(new Array(selectedOptions.length).fill(false));
+  }, [selectedOptions]);
+
+  const handleProgressionToggle = (index, value) => () => {
+    setSelectedProgression(prevState => {
+        const newState = [...prevState];
+        newState[index] = value;
+        return newState;
+    });
+  };
+
+  const handleSymmetricityToggle = (index, value) => () => {
+    setSelectedSymmetricity(prevState => {
+        const newState = [...prevState];
+        newState[index] = value;
+        return newState;
+    });
+  };
+
+  const familyHistoryToggle = (index) => {
+    setSelectedFamilyHistory(prevState => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      return newState;
+    });
+  };
+
+  const handleDelete = (optionToDelete) => () => {
+    setSelectedOptions((options) => options.filter((option) => option.symptom_medical_name !== optionToDelete.symptom_medical_name));
+  };
 
   return (
     <Box sx={{ padding: '0 2em', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
@@ -100,7 +124,7 @@ export default function SymptomSelection() {
               {/*2nd item: box with progression choices group*/}
               <Grid item xs={3} flexDirection="row" alignItems="center">
                 <ToggleButtonGroup 
-                  value={selected_progression}
+                  value={selected_progression[index]}
                   exclusive
                   onChange={handleProgressionToggle}
                   orientation={isSmallScreen ? 'vertical' : 'horizontal'}
@@ -108,21 +132,21 @@ export default function SymptomSelection() {
                   sx={{ marginRight: '1em', flexWrap: 'wrap' }}>
                   <ToggleButton
                     value="stable"
-                    onChange={handleProgressionToggle('stable')}
+                    onChange={handleProgressionToggle(index, 'stable')}
                     aria-label="stable"
                   >
                     Stable
                   </ToggleButton>
                   <ToggleButton
                     value="variable"
-                    onChange={handleProgressionToggle('variable')}
+                    onChange={handleProgressionToggle(index, 'variable')}
                     aria-label="variable"
                   >
                     Variable
                   </ToggleButton>
                   <ToggleButton
                     value="progressing"
-                    onChange={handleProgressionToggle('progressing')}
+                    onChange={handleProgressionToggle(index, 'progressing')}
                     aria-label="progressing"
                   >
                     Progressing
@@ -132,28 +156,28 @@ export default function SymptomSelection() {
               {/*3rd item: box with symmetricity choices group*/}
               <Grid item xs={3} flexDirection="row" alignItems="center">
                 <ToggleButtonGroup 
-                  value={selected_symmetricity}
+                  value={selected_symmetricity[index]}
                   onChange={handleSymmetricityToggle}
                   orientation={isSmallScreen ? 'vertical' : 'horizontal'}
                   aria-label="symmetricity"
                   sx={{ marginRight: '1em' , flexWrap: 'wrap' }}>
                   <ToggleButton
                     value="na"
-                    onChange={handleSymmetricityToggle('na')}
+                    onChange={handleSymmetricityToggle(index, 'na')}
                     aria-label="na"
                   >
                     NA
                   </ToggleButton>
                   <ToggleButton
                     value="unilateral"
-                    onChange={handleSymmetricityToggle('unilateral')}
+                    onChange={handleSymmetricityToggle(index, 'unilateral')}
                     aria-label="unilateral"
                   >
                     1 Side
                   </ToggleButton>
                   <ToggleButton
                     value="bilateral"
-                    onChange={handleSymmetricityToggle('bilateral')}
+                    onChange={handleSymmetricityToggle(index, 'bilateral')}
                     aria-label="bilateral"
                   >
                     2 Sides
@@ -163,9 +187,9 @@ export default function SymptomSelection() {
               {/*4th item: switch for faimily history*/}
               <Grid item xs={3} flexDirection="row" alignItems="center">
                 <Switch
-                  checked={selected_family_history}
-                  onChange={familyHistoryToggle}
-                  name="selected_family_history"
+                  checked={selected_family_history[index]}
+                  onChange={() => familyHistoryToggle(index)}
+                  name={`selected_family_history_${index}`}
                 />
               </Grid>
             </Grid>
