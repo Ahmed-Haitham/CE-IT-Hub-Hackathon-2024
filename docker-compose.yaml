@@ -18,7 +18,6 @@ services:
       timeout: 5s
       retries: 5
   api:
-
     build:
       context: app
       dockerfile: Dockerfile
@@ -34,14 +33,14 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DB_URL=postgresql+asyncpg://${PG_USER}:${PG_PASSWORD}@db:${DB_PORT}/${PG_INSTANCE}
-  # front:
-  #   build:
-  #     context: front
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     - REACT_APP_API_URL=http://localhost:8000
+      DB_URL: postgresql+asyncpg://${PG_USER}:${PG_PASSWORD}@db:${DB_PORT}/${PG_INSTANCE}
+  front:
+    build:
+      context: front
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
 volumes:
   pgdata:

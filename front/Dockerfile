@@ -6,7 +6,7 @@ FROM node:20.11.1-alpine
 # set work directory
 WORKDIR /front
 
-COPY neuro/package.json ./
+COPY neuro/package*.json ./
 
 RUN npm config set strict-ssl false
 # install dependencies
