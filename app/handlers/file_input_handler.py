@@ -2,7 +2,16 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from app.crud import SymptomClient, SymmetricityClient, DiseaseGroupClient, SymptomsDiseaseGroupClient, ProgressionClient, OnsetGroupClient, TestCkLevelClient
+from app.crud import (
+    SymptomClient, 
+    SymmetricityClient, 
+    DiseaseGroupClient, 
+    SymptomsDiseaseGroupClient, 
+    ProgressionClient, 
+    OnsetGroupClient, 
+    TestCkLevelClient,
+    ExSymptomsDiseaseGroupClient
+)
 
 
 
@@ -33,3 +42,5 @@ async def read_xlsx_and_load_to_tables(input_file, session):
     await prepare_table(session, all_data, DiseaseGroupClient, ['disease_group_medical_name'], columns_indexes_in_source_file=[6])
     await prepare_table(session, all_data, SymptomsDiseaseGroupClient, ['symptom_id', 'disease_group_id'],
                         columns_indexes_in_source_file=[1,6])
+    await prepare_table(session, all_data, ExSymptomsDiseaseGroupClient, ['symptom_id', 'disease_group_id'],
+                        columns_indexes_in_source_file=[10,6])

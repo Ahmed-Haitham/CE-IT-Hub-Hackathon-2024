@@ -26,6 +26,7 @@ class BaseSymptoms(BaseModel):
     #TODO: can tags be null?
     symptom_tags: list[str] | None
     disease_group: List[SymptomDisease]
+    excluding_in_diseases: List[SymptomDisease]
 
 class FullSymptoms(BaseSymptoms):
     model_config = ConfigDict(from_attributes=True)
@@ -38,6 +39,7 @@ class BaseDiseaseGroup(BaseModel):
     disease_group_medical_name: str
     disease_group_summary: str | None
     associated_symptoms: List[DiseaseSymptom]
+    excluding_symptoms: List[DiseaseSymptom]
 
 class FullDiseaseGroup(BaseDiseaseGroup):
     model_config = ConfigDict(from_attributes=True)
@@ -94,6 +96,13 @@ class FullBaseSymptomsDiseaseGroup(BaseSymptomsDiseaseGroup):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+
+class BaseExSymptomsDiseaseGroup(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    symptom_id: str | None
+    disease_group_id: str | None
 
 class SymptomBigTable(BaseModel):
     model_config = ConfigDict(from_attributes=True)

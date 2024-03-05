@@ -92,6 +92,24 @@ class SymptomsDiseaseGroupClient():
         await self.session.commit()
         return f"Table {table_instance} has been overwritten"  
 
+
+class ExSymptomsDiseaseGroupClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def populate_to_table(self, data):
+        
+        model = models.ExSymptomsDiseaseGroup
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"  
+    
+
 class SymmetricityClient():
     def __init__(self, session: AsyncSession):
         self.session = session
