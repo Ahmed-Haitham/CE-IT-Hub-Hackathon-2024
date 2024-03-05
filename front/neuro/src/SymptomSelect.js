@@ -26,13 +26,11 @@ export default function SymptomSelection() {
   };
 
   const handleDelete = (optionToDelete) => () => {
-    setSelectedOptions((options) => options.filter((option) => option.title !== optionToDelete.title));
+    setSelectedOptions((options) => options.filter((option) => option.symptom_medical_name !== optionToDelete.symptom_medical_name));
   };
 
   async function getList() {
     const response = await fetch('http://localhost:8000/symptoms?distinct_only=true');
-    // this works but the above does not: NetworkError when attempting to fetch resource.
-    // const response = await fetch('https://jsonplaceholder.typicode.com/posts');
     const data = await response.json();
     return data;
   }  
@@ -43,15 +41,13 @@ export default function SymptomSelection() {
 
   return (
     <Box sx={{ padding: '0 2em', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
-      {/*Seacrhable, scrollable dropdown with autocomplete and delete chips
-      can be enhanced to send requests after typing to search by tags as well
-      https://mui.com/material-ui/react-autocomplete/#google-maps-place*/}
+      {/*Seacrhable, scrollable dropdown with autocomplete and delete chips*/}
       <Autocomplete
         multiple
         limitTags={2}
         id="symptom-dropdown"
         options={list_items}
-        getOptionLabel={(option) => option.title}
+        getOptionLabel={(option) => option.symptom_medical_name}
         defaultValue={[]}
         value={selectedOptions}
         onChange={(event, newValue) => {
@@ -59,20 +55,18 @@ export default function SymptomSelection() {
         }}
         filterOptions={(options, params) => {
           const filtered = options.filter((option) => {
-            /*Untested, search by tags in response
-            const tagsMatch = option.tags.some((tag) =>
+            const tagsMatch = option.symptom_tags.some((tag) =>
               tag.toLowerCase().includes(params.inputValue.toLowerCase())
             );
-            */
-            const bodyMatch = option.body
-              .toLowerCase()
-              .includes(params.inputValue.toLowerCase());
-            const titleMatch = option.title
-              .toLowerCase()
-              .includes(params.inputValue.toLowerCase());
-            return bodyMatch || titleMatch;
-            //turn tags search instead of body
-            //return tagsMatch || titleMatch;
+            
+            const bodyMatch = option.symptom_description
+            .toLowerCase()
+            .includes(params.inputValue.toLowerCase());
+          
+            const titleMatch = option.symptom_medical_name
+            .toLowerCase()
+            .includes(params.inputValue.toLowerCase());
+            return tagsMatch || bodyMatch || titleMatch;
           });
           return filtered;
         }}
@@ -101,7 +95,7 @@ export default function SymptomSelection() {
                   <DeleteIcon />
                 </IconButton>
                 {/*1-B item: symptom text*/}
-                <ListItemText primary={option.title} />
+                <ListItemText primary={option.symptom_medical_name} />
               </Grid>
               {/*2nd item: box with progression choices group*/}
               <Grid item xs={3} flexDirection="row" alignItems="center">
@@ -125,6 +119,13 @@ export default function SymptomSelection() {
                     aria-label="variable"
                   >
                     Variable
+                  </ToggleButton>
+                  <ToggleButton
+                    value="progressing"
+                    onChange={handleProgressionToggle('progressing')}
+                    aria-label="progressing"
+                  >
+                    Progressing
                   </ToggleButton>
                 </ToggleButtonGroup>
               </Grid>
