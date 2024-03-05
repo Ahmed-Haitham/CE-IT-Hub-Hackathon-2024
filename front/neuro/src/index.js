@@ -24,26 +24,57 @@ const theme = createTheme({
 });
 
 function App() {
+  //state for actor selection
   const [assessment_actor, setAssessmentActor] = React.useState({
     selectedActor: 'patient',
-    // Add other state variables here for other components
   });
+  //state for symptom selection
+  const [selected_progression, setSelectedProgression] = React.useState([]);
+  const [selected_symmetricity, setSelectedSymmetricity] = React.useState([]);
+  const [selected_family_history, setSelectedFamilyHistory] = React.useState([]);
+  const [selected_dropdown_symptoms, setSelectedDropdownSelection] = React.useState([]);
 
+  //function for actor selection
   const handleActorChange = (value) => {
     setAssessmentActor({ ...assessment_actor, selectedActor: value });
   };
+  //functions for symptom selection
+  const handleProgressionToggle = (index, value) => () => {
+    setSelectedProgression(prevState => {
+        const newState = [...prevState];
+        newState[index] = value;
+        return newState;
+    });
+  };
+  const handleSymmetricityToggle = (index, value) => () => {
+    setSelectedSymmetricity(prevState => {
+        const newState = [...prevState];
+        newState[index] = value;
+        return newState;
+    });
+  };
+  const familyHistoryToggle = (index) => {
+    setSelectedFamilyHistory(prevState => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      return newState;
+    });
+  };
+  const handleDeleteSymptom = (optionToDelete) => () => {
+    setSelectedDropdownSelection((options) => options.filter((option) => option.symptom_medical_name !== optionToDelete.symptom_medical_name));
+  };
 
+  //function for submitting the assessment
   const handleSubmit = () => {
     const requestData = {
       selectedActor: assessment_actor.selectedActor,
-      // Add other data properties as needed
+      //TODO: Add the rest of the data
     };
 
     fetch('http://localhost:8000/evaluateAssessment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Add any other headers if needed
       },
       body: JSON.stringify(requestData),
     })
@@ -60,9 +91,24 @@ function App() {
       <ThemeProvider theme={theme}>
         <Header />
         <AssessmentDivider text="Do the assessment as" />
-        <Assessment selected={assessment_actor.selectedActor} handleToggle={handleActorChange}/>
+        <Assessment 
+          selected={assessment_actor.selectedActor} handleToggle={handleActorChange}
+        />
         <AssessmentDivider text="Which symptoms are present?" />
-        <SymptomSelection />
+        <SymptomSelection 
+          handleProgressionToggle={handleProgressionToggle}
+          handleSymmetricityToggle={handleSymmetricityToggle}
+          familyHistoryToggle={familyHistoryToggle}
+          handleDelete={handleDeleteSymptom}
+          selected_progression={selected_progression}
+          selected_symmetricity={selected_symmetricity}
+          selected_family_history={selected_family_history}
+          selectedOptions={selected_dropdown_symptoms}
+          setSelectedProgression={setSelectedProgression}
+          setSelectedSymmetricity={setSelectedSymmetricity}
+          setSelectedFamilyHistory={setSelectedFamilyHistory}
+          setSelectedOptions={setSelectedDropdownSelection}
+        />
         <AssessmentDivider text="Now provide final details" />
         <FinalQuestions />
         <AssessmentDivider text="Are you ready to submit?" />

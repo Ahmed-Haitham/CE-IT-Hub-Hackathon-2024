@@ -6,62 +6,27 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Switch from '@mui/material/Switch';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-export default function SymptomSelection() {
+const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelectedSymmetricity, setSelectedFamilyHistory, selected_progression, selected_symmetricity, selected_family_history, selectedOptions, handleProgressionToggle, handleSymmetricityToggle, familyHistoryToggle, handleDelete}) => {
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
-  const [selected_progression, setSelectedProgression] = React.useState([]);
-  const [selected_symmetricity, setSelectedSymmetricity] = React.useState([]);
-  const [selected_family_history, setSelectedFamilyHistory] = React.useState([]);
-  const [selectedOptions, setSelectedOptions] = React.useState([]);
-
+  const [list_items, setListItems] = React.useState([]);
   async function getList() {
     const response = await fetch('http://localhost:8000/symptoms?distinct_only=true');
     const data = await response.json();
     return data;
-  }  
-  const [list_items, setListItems] = React.useState([]);
+  }
+
   React.useEffect(() => {
     getList().then(data => setListItems(data));
   }, []);
-
   React.useEffect(() => {
     setSelectedProgression(new Array(selectedOptions.length).fill('stable'));
   }, [selectedOptions]);
-
   React.useEffect(() => {
     setSelectedSymmetricity(new Array(selectedOptions.length).fill('na'));
   }, [selectedOptions]);
-
   React.useEffect(() => {
     setSelectedFamilyHistory(new Array(selectedOptions.length).fill(false));
   }, [selectedOptions]);
-
-  const handleProgressionToggle = (index, value) => () => {
-    setSelectedProgression(prevState => {
-        const newState = [...prevState];
-        newState[index] = value;
-        return newState;
-    });
-  };
-
-  const handleSymmetricityToggle = (index, value) => () => {
-    setSelectedSymmetricity(prevState => {
-        const newState = [...prevState];
-        newState[index] = value;
-        return newState;
-    });
-  };
-
-  const familyHistoryToggle = (index) => {
-    setSelectedFamilyHistory(prevState => {
-      const newState = [...prevState];
-      newState[index] = !newState[index];
-      return newState;
-    });
-  };
-
-  const handleDelete = (optionToDelete) => () => {
-    setSelectedOptions((options) => options.filter((option) => option.symptom_medical_name !== optionToDelete.symptom_medical_name));
-  };
 
   return (
     <Box sx={{ padding: '0 2em', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
@@ -82,11 +47,9 @@ export default function SymptomSelection() {
             const tagsMatch = option.symptom_tags.some((tag) =>
               tag.toLowerCase().includes(params.inputValue.toLowerCase())
             );
-            
             const bodyMatch = option.symptom_description
             .toLowerCase()
             .includes(params.inputValue.toLowerCase());
-          
             const titleMatch = option.symptom_medical_name
             .toLowerCase()
             .includes(params.inputValue.toLowerCase());
@@ -199,4 +162,6 @@ export default function SymptomSelection() {
       </Box>
     </Box>
   );
-}
+};
+
+export default SymptomSelection;
