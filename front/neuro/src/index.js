@@ -8,7 +8,6 @@ import SymptomSelection from './SymptomSelect';
 import FinalQuestions from './FinalQuestions';
 import SendAssessment from './EndAssessment';
 import Steps from './Footer';
-import reportWebVitals from './reportWebVitals';
 
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
@@ -24,25 +23,55 @@ const theme = createTheme({
   },
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-    <Header />
-    <AssessmentDivider text="Do the assessment as" />
-    <Assessment />
-    <AssessmentDivider text="Which symptoms are present?" />
-    <SymptomSelection />
-    <AssessmentDivider text="Now provide final details" />
-    <FinalQuestions />
-    <AssessmentDivider text="Are you ready to submit?" />
-    <SendAssessment />
-    <Steps />
-    </ThemeProvider>
-  </React.StrictMode>
-);
+function App() {
+  const [assessment_actor, setAssessmentActor] = React.useState({
+    selectedActor: 'patient',
+    // Add other state variables here for other components
+  });
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  const handleActorChange = (value) => {
+    setAssessmentActor({ ...assessment_actor, selectedActor: value });
+  };
+
+  const handleSubmit = () => {
+    const requestData = {
+      selectedActor: assessment_actor.selectedActor,
+      // Add other data properties as needed
+    };
+
+    fetch('http://localhost:8000', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any other headers if needed
+      },
+      body: JSON.stringify(requestData),
+    })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+  
+  return (
+    <React.StrictMode>
+      <ThemeProvider theme={theme}>
+        <Header />
+        <AssessmentDivider text="Do the assessment as" />
+        <Assessment selected={assessment_actor.selectedActor} handleToggle={handleActorChange}/>
+        <AssessmentDivider text="Which symptoms are present?" />
+        <SymptomSelection />
+        <AssessmentDivider text="Now provide final details" />
+        <FinalQuestions />
+        <AssessmentDivider text="Are you ready to submit?" />
+        <SendAssessment onSubmit={handleSubmit}/>
+        <Steps />
+      </ThemeProvider>
+    </React.StrictMode>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
