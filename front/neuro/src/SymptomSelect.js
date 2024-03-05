@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Switch from '@mui/material/Switch';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelectedSymmetricity, setSelectedFamilyHistory, selected_progression, selected_symmetricity, selected_family_history, selectedOptions, handleProgressionToggle, handleSymmetricityToggle, familyHistoryToggle, handleDelete}) => {
+const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelectedSymmetricity, setSelectedFamilyHistory, selected_progression, selected_symmetricity, selected_family_history, selectedOptions, handleProgressionToggle, handleSymmetricityToggle, familyHistoryToggle}) => {
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const [list_items, setListItems] = React.useState([]);
   async function getList() {
@@ -14,6 +14,10 @@ const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelec
     const data = await response.json();
     return data;
   }
+
+  const handleDelete = (optionToDelete) => () => {
+    setSelectedOptions((options) => options.filter((option) => option.symptom_medical_name !== optionToDelete.symptom_medical_name));
+  };
 
   React.useEffect(() => {
     getList().then(data => setListItems(data));

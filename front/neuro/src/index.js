@@ -60,14 +60,15 @@ function App() {
       return newState;
     });
   };
-  const handleDeleteSymptom = (optionToDelete) => () => {
-    setSelectedDropdownSelection((options) => options.filter((option) => option.symptom_medical_name !== optionToDelete.symptom_medical_name));
-  };
-
+  
   //function for submitting the assessment
   const handleSubmit = () => {
     const requestData = {
       selectedActor: assessment_actor.selectedActor,
+      selectedSymptoms: selected_dropdown_symptoms ? selected_dropdown_symptoms.map(symptom => symptom.symptom_medical_name) : [],
+      selectedProgression: selected_progression,
+      selectedSymmetricity: selected_symmetricity,
+      selectedFamilyHistory: selected_family_history,
       //TODO: Add the rest of the data
     };
 
@@ -99,7 +100,6 @@ function App() {
           handleProgressionToggle={handleProgressionToggle}
           handleSymmetricityToggle={handleSymmetricityToggle}
           familyHistoryToggle={familyHistoryToggle}
-          handleDelete={handleDeleteSymptom}
           selected_progression={selected_progression}
           selected_symmetricity={selected_symmetricity}
           selected_family_history={selected_family_history}
