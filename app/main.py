@@ -27,14 +27,9 @@ from app.db import engine, get_session, start_db
 
 app = FastAPI(title="WUM Neurological disease tool backend")
 
-origins = [
-    "http://localhost:3000",
-    "http://front:3000"
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
