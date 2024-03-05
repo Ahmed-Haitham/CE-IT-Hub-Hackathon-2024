@@ -33,6 +33,13 @@ function App() {
   const [selected_symmetricity, setSelectedSymmetricity] = React.useState([]);
   const [selected_family_history, setSelectedFamilyHistory] = React.useState([]);
   const [selected_dropdown_symptoms, setSelectedDropdownSelection] = React.useState([]);
+  //state for final questions
+  const [selected_ck, setSelectedCK] = React.useState({
+    selectedCk: 'not_tested',
+  });
+  const [selected_age_onset, setSelectedAgeOnset] = React.useState({
+    selectedAgeOnset: 'birth',
+  });
 
   //function for actor selection
   const handleActorChange = (value) => {
@@ -60,6 +67,13 @@ function App() {
       return newState;
     });
   };
+  //functions for final questions
+  const handleCKToggle = (value) => {
+    setSelectedCK({ ...selected_ck, selectedCk: value });
+  };
+  const handleAgeOnsetToggle = (value) => {
+    setSelectedAgeOnset({ ...selected_age_onset, selectedAgeOnset: value });
+  };
   
   //function for submitting the assessment
   const handleSubmit = () => {
@@ -69,7 +83,8 @@ function App() {
       selectedProgression: selected_progression,
       selectedSymmetricity: selected_symmetricity,
       selectedFamilyHistory: selected_family_history,
-      //TODO: Add the rest of the data
+      selectedCK: selected_ck.selectedCk,
+      selectedAgeOnset: selected_age_onset.selectedAgeOnset
     };
 
     fetch('http://localhost:8000/evaluateAssessment', {
@@ -93,7 +108,8 @@ function App() {
         <Header />
         <AssessmentDivider text="Do the assessment as" />
         <Assessment 
-          selected={assessment_actor.selectedActor} handleToggle={handleActorChange}
+          selected={assessment_actor.selectedActor}
+          handleToggle={handleActorChange}
         />
         <AssessmentDivider text="Which symptoms are present?" />
         <SymptomSelection 
@@ -110,7 +126,12 @@ function App() {
           setSelectedOptions={setSelectedDropdownSelection}
         />
         <AssessmentDivider text="Now provide final details" />
-        <FinalQuestions />
+        <FinalQuestions 
+          selected_ck={selected_ck.selectedCk}
+          selected_age_onset={selected_age_onset.selectedAgeOnset}
+          handleCKToggle={handleCKToggle}
+          handleAgeOnsetToggle={handleAgeOnsetToggle}
+        />
         <AssessmentDivider text="Are you ready to submit?" />
         <SendAssessment onSubmit={handleSubmit}/>
         <Steps />

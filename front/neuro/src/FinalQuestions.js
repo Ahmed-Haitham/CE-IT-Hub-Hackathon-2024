@@ -2,18 +2,8 @@ import * as React from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Grid, ToggleButton, ToggleButtonGroup, Box } from '@mui/material';
 
-const FinalQuestions = () => {
-    const [selected_ck, setSelectedCK] = React.useState('not_tested');
-    const [selected_age_onset, setSelectedAgeOnset] = React.useState('birth');
+const FinalQuestions = ({selected_ck, selected_age_onset, handleCKToggle, handleAgeOnsetToggle}) => {
     const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
-
-    const handleCKToggle = (value) => () => {
-        setSelectedCK(value);
-    };
-
-    const handleAgeOnsetToggle = (value) => () => {
-        setSelectedAgeOnset(value);
-    };
 
     return (
         <React.Fragment>
@@ -33,7 +23,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="not_tested"
                                 selected={selected_ck === 'not_tested'}
-                                onChange={handleCKToggle('not_tested')}
+                                onChange={() => handleCKToggle('not_tested')}
                                 aria-label="not_tested"
                             >
                             Untested
@@ -41,7 +31,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="normal"
                                 selected={selected_ck === 'normal'}
-                                onChange={handleCKToggle('normal')}
+                                onChange={() => handleCKToggle('normal')}
                                 aria-label="normal"
                             >
                             Normal
@@ -49,7 +39,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="over_one_k"
                                 selected={selected_ck === 'over_one_k'}
-                                onChange={handleCKToggle('over_one_k')}
+                                onChange={() => handleCKToggle('over_one_k')}
                                 aria-label="over_one_k"
                             >
                             Over 1'000
@@ -57,7 +47,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="one_k_to_ten_k"
                                 selected={selected_ck === 'one_k_to_ten_k'}
-                                onChange={handleCKToggle('one_k_to_ten_k')}
+                                onChange={() => handleCKToggle('one_k_to_ten_k')}
                                 aria-label="one_k_to_ten_k"
                             >
                             1'000 to 10'000
@@ -65,7 +55,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="over_ten_k"
                                 selected={selected_ck === 'over_ten_k'}
-                                onChange={handleCKToggle('over_ten_k')}
+                                onChange={() => handleCKToggle('over_ten_k')}
                                 aria-label="over_ten_k"
                             >
                             Over 10'000
@@ -91,7 +81,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="birth"
                                 selected={selected_age_onset === 'birth'}
-                                onChange={handleAgeOnsetToggle('birth')}
+                                onChange={() => handleAgeOnsetToggle('birth')}
                                 aria-label="birth"
                             >
                             Since birth
@@ -99,7 +89,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="under_ten"
                                 selected={selected_age_onset === 'under_ten'}
-                                onChange={handleAgeOnsetToggle('under_ten')}
+                                onChange={() => handleAgeOnsetToggle('under_ten')}
                                 aria-label="under_ten"
                             >
                             Under 10yo
@@ -107,7 +97,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="ten_to_twenty"
                                 selected={selected_age_onset === 'ten_to_twenty'}
-                                onChange={handleAgeOnsetToggle('ten_to_twenty')}
+                                onChange={() => handleAgeOnsetToggle('ten_to_twenty')}
                                 aria-label="ten_to_twenty"
                             >
                             10yo to 20yo
@@ -115,7 +105,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="twenty_to_thirty"
                                 selected={selected_age_onset === 'twenty_to_thirty'}
-                                onChange={handleAgeOnsetToggle('twenty_to_thirty')}
+                                onChange={() => handleAgeOnsetToggle('twenty_to_thirty')}
                                 aria-label="twenty_to_thirty"
                             >
                             20yo to 30yo
@@ -123,7 +113,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="thirty_to_fifty"
                                 selected={selected_age_onset === 'thirty_to_fifty'}
-                                onChange={handleAgeOnsetToggle('thirty_to_fifty')}
+                                onChange={() => handleAgeOnsetToggle('thirty_to_fifty')}
                                 aria-label="thirty_to_fifty"
                             >
                             30yo to 50yo
@@ -131,7 +121,7 @@ const FinalQuestions = () => {
                             <ToggleButton
                                 value="over_fifty"
                                 selected={selected_age_onset === 'over_fifty'}
-                                onChange={handleAgeOnsetToggle('over_fifty')}
+                                onChange={() => handleAgeOnsetToggle('over_fifty')}
                                 aria-label="over_fifty"
                             >
                             Over 50yo
