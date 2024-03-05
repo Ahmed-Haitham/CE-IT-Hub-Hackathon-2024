@@ -75,10 +75,14 @@ async def get_table_entry(table_entry_id: int, db: AsyncSession = Depends(get_se
     return await client.get_table_entry(table_entry_id)
 
 @app.post('/bigTable', response_model=schemas.FullBigTable)
-async def post_table_entry(table_entry: schemas.BaseBigTable, db: AsyncSession = Depends(get_session)):
+async def post_table_entry(table_entry: schemas.BaseBigTable, dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)):
     client = BigTableClient(db)
     return await client.add_entry(table_entry)
 
+@app.post('/evaluateAssessment', response_model=None)
+async def evaluate_assessment(assessment: dict, db: AsyncSession = Depends(get_session)):
+    if assessment:
+        return {"received": assessment}
 
 @app.post("/uploadfile/", response_model=dict)
 @token_required

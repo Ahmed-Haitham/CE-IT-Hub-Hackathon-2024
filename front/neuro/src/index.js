@@ -39,7 +39,7 @@ function App() {
       // Add other data properties as needed
     };
 
-    fetch('http://localhost:8000', {
+    fetch('http://localhost:8000/evaluateAssessment', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
