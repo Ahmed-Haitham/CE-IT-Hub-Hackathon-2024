@@ -13,6 +13,11 @@ import reportWebVitals from './reportWebVitals';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
 const theme = createTheme({
   palette: {
     ochre: {
@@ -24,22 +29,54 @@ const theme = createTheme({
   },
 });
 
+const MainPage = () => {
+  return (
+    <React.StrictMode>
+      <ThemeProvider theme={theme}>
+        <Header />
+        <AssessmentDivider text="Do the assessment as" />
+        <Assessment />
+        <AssessmentDivider text="Which symptoms are present?" />
+        <SymptomSelection />
+        <AssessmentDivider text="Now provide final details" />
+        <FinalQuestions />
+        <AssessmentDivider text="Are you ready to submit?" />
+        <SendAssessment />
+        <Steps />
+      </ThemeProvider>
+    </React.StrictMode>
+  );
+};
+
+const SummaryPage = () => {
+  return (
+    <React.StrictMode>
+      <ThemeProvider theme={theme}>
+        <Header />
+        <AssessmentDivider text="Do the assessment as" />
+        <AssessmentDivider text="Which symptoms are present?" />
+        <AssessmentDivider text="Now provide final details" />
+        <AssessmentDivider text="Are you ready to submit?" />
+      </ThemeProvider>
+    </React.StrictMode>
+  );
+};
+
+// Add more links here
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainPage />,
+  },
+  {
+    path: "summary",
+    element: <SummaryPage />,
+  },
+]);
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-    <Header />
-    <AssessmentDivider text="Do the assessment as" />
-    <Assessment />
-    <AssessmentDivider text="Which symptoms are present?" />
-    <SymptomSelection />
-    <AssessmentDivider text="Now provide final details" />
-    <FinalQuestions />
-    <AssessmentDivider text="Are you ready to submit?" />
-    <SendAssessment />
-    <Steps />
-    </ThemeProvider>
-  </React.StrictMode>
+    <RouterProvider router={router}/>
 );
 
 // If you want to start measuring performance in your app, pass a function
