@@ -9,7 +9,6 @@ import FinalQuestions from './FinalQuestions';
 import SendAssessment from './EndAssessment';
 import Steps from './Footer';
 import reportWebVitals from './reportWebVitals';
-
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
 
@@ -53,10 +52,8 @@ const SummaryPage = () => {
     <React.StrictMode>
       <ThemeProvider theme={theme}>
         <Header />
-        <AssessmentDivider text="Do the assessment as" />
-        <AssessmentDivider text="Which symptoms are present?" />
-        <AssessmentDivider text="Now provide final details" />
-        <AssessmentDivider text="Are you ready to submit?" />
+        <AssessmentDivider text="Summary" />
+        <SendAssessment/>
       </ThemeProvider>
     </React.StrictMode>
   );
