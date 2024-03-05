@@ -84,3 +84,13 @@ class FullBigTable(BaseBigTable):
 
     id: int
     
+class EvaluateAssessment(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    selectedActor: str
+    selectedSymptoms: list[str]
+    selectedProgression: list[str]
+    selectedSymmetricity: list[str]
+    selectedFamilyHistory: list[bool]
+    selectedCk: str
+    selectedAgeOnset: str

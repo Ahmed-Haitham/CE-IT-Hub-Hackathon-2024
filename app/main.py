@@ -80,7 +80,7 @@ async def post_table_entry(table_entry: schemas.BaseBigTable, dependencies=Depen
     return await client.add_entry(table_entry)
 
 @app.post('/evaluateAssessment', response_model=None)
-async def evaluate_assessment(assessment: dict, db: AsyncSession = Depends(get_session)):
+async def evaluate_assessment(assessment: schemas.EvaluateAssessment, db: AsyncSession = Depends(get_session)):
     if assessment:
         return {"received": assessment}
 

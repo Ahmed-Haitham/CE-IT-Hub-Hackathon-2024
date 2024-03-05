@@ -83,7 +83,7 @@ function App() {
       selectedProgression: selected_progression,
       selectedSymmetricity: selected_symmetricity,
       selectedFamilyHistory: selected_family_history,
-      selectedCK: selected_ck.selectedCk,
+      selectedCk: selected_ck.selectedCk,
       selectedAgeOnset: selected_age_onset.selectedAgeOnset
     };
 
