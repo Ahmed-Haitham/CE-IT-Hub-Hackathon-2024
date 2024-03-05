@@ -10,7 +10,7 @@ export default function SymptomSelection() {
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const [selected_progression, setSelectedProgression] = React.useState([]);
   const [selected_symmetricity, setSelectedSymmetricity] = React.useState([]);
-  const [selected_family_history, setSelectedFamilyHistory] = React.useState(false);
+  const [selected_family_history, setSelectedFamilyHistory] = React.useState([]);
   const [selectedOptions, setSelectedOptions] = React.useState([]);
 
   async function getList() {
@@ -31,6 +31,10 @@ export default function SymptomSelection() {
     setSelectedSymmetricity(new Array(selectedOptions.length).fill('na'));
   }, [selectedOptions]);
 
+  React.useEffect(() => {
+    setSelectedFamilyHistory(new Array(selectedOptions.length).fill(false));
+  }, [selectedOptions]);
+
   const handleProgressionToggle = (index, value) => () => {
     setSelectedProgression(prevState => {
         const newState = [...prevState];
@@ -47,8 +51,12 @@ export default function SymptomSelection() {
     });
   };
 
-  const familyHistoryToggle = (event) => {
-    setSelectedFamilyHistory(event.target.checked);
+  const familyHistoryToggle = (index) => {
+    setSelectedFamilyHistory(prevState => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      return newState;
+    });
   };
 
   const handleDelete = (optionToDelete) => () => {
@@ -179,9 +187,9 @@ export default function SymptomSelection() {
               {/*4th item: switch for faimily history*/}
               <Grid item xs={3} flexDirection="row" alignItems="center">
                 <Switch
-                  checked={selected_family_history}
-                  onChange={familyHistoryToggle}
-                  name="selected_family_history"
+                  checked={selected_family_history[index]}
+                  onChange={() => familyHistoryToggle(index)}
+                  name={`selected_family_history_${index}`}
                 />
               </Grid>
             </Grid>
