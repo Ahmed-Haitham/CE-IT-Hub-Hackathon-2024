@@ -1,7 +1,9 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from . import models, schemas
+from fastapi.encoders import jsonable_encoder
+
+from . import models, schemas, auth
 
 
 class SymptomClient():
@@ -76,3 +78,67 @@ class BigTableClient():
         await self.session.commit()
         await self.session.refresh(new_entry)
         return new_entry
+
+class AuthClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+    async def get_token(self, user_credentials: schemas.UserModel):
+        user = await self.session.scalar(
+            select(models.User).filter(models.User.username == user_credentials.username)
+        )
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username"
+            )
+        if not auth.verify_password(user_credentials.password, user.password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password"
+            )
+        access = auth.create_access_token(user.id)
+        refresh = auth.create_refresh_token(user.id)
+        token_db = models.TokenTable(
+            user_id=user.id, access_token=access, refresh_token=refresh, status=True
+        )
+        self.session.add(token_db)
+        await self.session.commit()
+        await self.session.refresh(token_db)
+        return {
+            "access_token": access,
+            "refresh_token": refresh,
+        }
+
+    async def add_user(self, user):
+        existing_user = await self.session.execute(
+            select(models.User).filter_by(username=user.username)
+        )
+        if existing_user.scalar_one_or_none():
+            raise HTTPException(status_code=400, detail="Username already registered")
+        encrypted_password = auth.get_hashed_password(user.password)
+        new_user = models.User(username=user.username, password=encrypted_password)
+        self.session.add(new_user)
+        await self.session.commit()
+        await self.session.refresh(new_user)
+        return {"message": "user created successfully"}
+
+    async def get_users(self):
+        result = await self.session.execute(select(models.User))
+        return [jsonable_encoder(user) for user in result.scalars()]
+
+    async def change_pass(self, change_pass_request):
+        user = await self.session.scalar(
+        select(models.User).filter(models.User.username == change_pass_request.username)
+        )
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="User not found"
+            )
+        if not auth.verify_password(change_pass_request.old_password, user.password):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid old password"
+            )
+        encrypted_password = auth.get_hashed_password(change_pass_request.new_password)
+        user.password = encrypted_password
+        await self.session.commit()
+        return {"message": "Password changed successfully"}
+
+    

@@ -10,12 +10,7 @@ from .models import (
 )
 
 
-class UserCreate(BaseModel):
-    username: str
-    password: str
-
-
-class requestdetails(BaseModel):
+class UserModel(BaseModel):
     username: str
     password: str
 
@@ -25,7 +20,7 @@ class TokenSchema(BaseModel):
     refresh_token: str
 
 
-class changepassword(BaseModel):
+class PasswordChange(BaseModel):
     username: str
     old_password: str
     new_password: str
