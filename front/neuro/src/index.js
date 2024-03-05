@@ -5,6 +5,7 @@ import Header from './Header';
 import AssessmentDivider from './AssessmentDivider';
 import Assessment from './ActorAssessment';
 import SymptomSelection from './SymptomSelect';
+import SymptomSelection2 from './SymptomSelect2';
 import FinalQuestions from './FinalQuestions';
 import SendAssessment from './EndAssessment';
 import Steps from './Footer';
@@ -33,6 +34,7 @@ root.render(
     <Assessment />
     <AssessmentDivider text="Which symptoms are present?" />
     <SymptomSelection />
+    <SymptomSelection2 />
     <AssessmentDivider text="Now provide final details" />
     <FinalQuestions />
     <AssessmentDivider text="Are you ready to submit?" />
