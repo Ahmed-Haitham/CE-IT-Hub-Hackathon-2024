@@ -77,7 +77,6 @@ def combine_dataset(excel_file_path, remove_sheets, remove_columns=['Grupa objaw
     return combined_df
 
 
-
 def convert_excel_to_long_format(excel_file_path, remove_sheets, remove_columns):
     """
     Prepare a long dataset from an Excel file and removing specified sheets and columns.

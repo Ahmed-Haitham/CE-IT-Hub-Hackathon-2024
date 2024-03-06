@@ -1,74 +1,107 @@
 # CE-IT-Hub-Hackathon-2024
 
 ## Steps on windows to install WSL
-run wsl --install on admin terminal <br/>
-reboot your machine <br/>
-open ubuntu (executable) <br/>
-run sudo apt update
+1. Open terminal as admin and run:
+    ```bash
+    run wsl --install
+    ```
+2. Reboot your machine
 
-## now install p&g certificate on wsl
-enter root terminal (sudo su) <br/>
-copy one big command from developerportal (https://developerportal.pg.com/docs/default/component/devdocs/network/ssl-inspection/Solutions/#option-2-one-big-command) <br/>
-paste it into root cmd line <br/>
-press enter in the first pink window <br/>
-use space key to add pgrootcert, then press enter <br/>
-CTRL+D to exit root terminal <br/>
-sudo service docker stop <br/>
-sudo service docker start
+3. Open ubuntu (executable) and run:
+    ```bash
+    sudo apt update
+    ```
+
+## Install p&g certificate on wsl
+1. Open Ubuntu terminal and run:
+    ```bash
+    sudo su
+    ```
+2. Paste one big command from developerportal into root cmd line(https://developerportal.pg.com/docs/default/component/devdocs/network/ssl-inspection/Solutions/#option-2-one-big-command)
+3. Press enter in the first pink window
+4. Use space key to add pgrootcert, then press enter
+5. CTRL+D to exit root terminal
+6. Start docker service:
+    ```bash
+    sudo service docker stop
+    sudo service docker start
+    ```
 
 ## now install docker:
-sudo apt-get update <br/>
-sudo apt-get install ca-certificates curl <br/>
-sudo install -m 0755 -d /etc/apt/keyrings <br/>
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc <br/>
-sudo chmod a+r /etc/apt/keyrings/docker.asc <br/>
+```bash
+sudo apt-get update
+sudo apt-get install ca-certificates curl
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
 echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
   $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
   sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update <br/>
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin <br/>
+sudo apt-get update
+sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo docker run hello-world
+```
 
 ## now install git and clone repo on wsl
 ### Prerequisite (have git credentials manager set up on windows: https://docs.github.com/en/get-started/getting-started-with-git/caching-your-github-credentials-in-git)
-sudo-apt-get install git <br/>
-git config --global user.name "YOURNAME" <br/>
-git config --global user.email "YOURGITHUB EMAIL" <br/>
-git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe" <br/>
+```bash
+sudo-apt-get install git
+git config --global user.name "YOURNAME"
+git config --global user.email "YOURGITHUB EMAIL"
+git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/bin/git-credential-manager.exe"
 git clone https://github.com/Ahmed-Haitham/CE-IT-Hub-Hackathon-2024
+```
 
 ## now connect vs code to wsl
-make sure that VS code is added to your windows path (environment variable settings) <br/>
-open your vs code on windows and install the wsl extension <br/>
-from your ubuntu terminal, type: <br/>
-cd /mnt/c <br/>
-code . <br/>
-Likely now you will get errors from VS code. Restarting your computer and opening vs code again should fix it. <br/>
+1. Make sure that VS code is added to your windows path (environment variable settings)
+2. Open your vs code on windows and install the wsl extension
+3. From your ubuntu terminal, type:
+    ```bash
+    cd /mnt/c
+    code .
+    ```
+    Likely now you will get errors from VS code. Restarting your computer and opening vs code again should fix it.
 
 ## Now build the docker images using docker compose
-from your vs code connected to wsl ubuntu, add a .env file in the root directory <br/>
-This file will contain required variables for your database configuration <br/>
-You can paste the following, or change the values <br/>
-PG_INSTANCE=pginstance <br/>
-PG_USER=user <br/>
-PG_PASSWORD=pass <br/>
-DB_PORT=5432 <br/>
-cd CE-IT-Hub-Hackathon-2024 <br/>
-sudo docker compose up -d --build <br/>
-Now you should have 2 containers running (web and db) <br/>
-Check it by running: <br/>
-sudo docker compose ps <br/>
-If you have issues spinning up containers, use: <br/>
-sudo docker compose logs CONTAINERNAME <br/>
-Now you should have a running postgres db on port 5432 and a fastapi server on http://127.0.0.1:8000/
-To spin the containers down: <br/>
-sudo docker compose down <br/>
-If you also want to delete the persisted database volume: <br/>
-sudo docker compose down -v
+1. From your vs code connected to wsl ubuntu, add a .env file in the root directory. This file will contain required variables for your database configuration. 
+You can paste the following for development purpose. For PROD, .env file should contain strong passwords/secrets:
+    ```ini
+    PG_INSTANCE=pginstance
+    PG_USER=user
+    PG_PASSWORD=pass
+    DB_PORT=5432
+    JWT_SECRET_KEY=asd3j4kEdj!
+    JWT_REFRESH_SECRET_KEY=lkf3Rsad312@df%
+    ADMIN_USERNAME=admin
+    ADMIN_PASSWORD=admin
+    ```
+2. Build the application:
+    ```bash
+    cd CE-IT-Hub-Hackathon-2024
+    sudo docker compose up -d --build
+    ```
+3. Now you should have 2 containers running (web and db). Check it by running:
+  ```bash
+  sudo docker compose ps
+  ```
+4. If you have issues spinning up containers, use:
+    ```bash
+    sudo docker compose logs CONTAINERNAME
+    ```
+5. Now you should have a running postgres db on port 5432 and a fastapi server on http://127.0.0.1:8000/. To spin the containers down:
+    ```bash
+    sudo docker compose down
+    ```
+6. If you also want to delete the persisted database volume:
+    ```bash
+    sudo docker compose down -v
+    ```
 
 ## Optional: Create a python virtual environment and install requirements
-This will help you by making vs code suggest valid autocompletes <br/>
-cd ENV DIRECTORY <br/>
-python3 -m venv hackenv <br/>
+This will help you by making vs code suggest valid autocompletes:
+```bash
+cd ENV DIRECTORY
+python3 -m venv hackenv
 pip install -r requirements.txt
+```

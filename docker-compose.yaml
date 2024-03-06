@@ -24,6 +24,8 @@ services:
       args:
         JWT_SECRET_KEY: ${JWT_SECRET_KEY}
         JWT_REFRESH_SECRET_KEY: ${JWT_REFRESH_SECRET_KEY}
+        ADMIN_USERNAME: ${ADMIN_USERNAME}
+        ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
