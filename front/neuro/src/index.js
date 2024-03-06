@@ -7,15 +7,28 @@ import Assessment from './ActorAssessment';
 import SymptomSelection from './SymptomSelect';
 import FinalQuestions from './FinalQuestions';
 import SendAssessment from './EndAssessment';
+import SaveAssessment from './Save';
 import Steps from './Footer';
 import reportWebVitals from './reportWebVitals';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
+import { Typography, Box } from '@mui/material';
+import DemoPaper from '@mui/material/Paper';
+import Paper from '@mui/material/Paper';
+
+// import { useSelector } from 'react-redux'; // Importing useSelector hook
 
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+
+import { useSelector } from 'react-redux'; // Assuming you're using Redux for state management
+const constructSummary = () => {
+  // Customize the template based on your requirements
+  // return `Since you have ${symptoms.join(', ')}, you probably have ${condition}.`;
+  return `Since you have *some symptoms*, you should go to *doctor*.`;
+};
 
 const theme = createTheme({
   palette: {
@@ -47,13 +60,23 @@ const MainPage = () => {
   );
 };
 
+const SummaryContent = ({ summary }) => {
+  return (
+    <Paper variant="elevation">{'Since you have *some symptoms*, you should to to *doctor*.'}</Paper>
+    // <Box sx={{ padding: '1em' }}>
+    //   <Typography variant="body1">{summary}</Typography>
+    // </Box>
+  );
+};
+
 const SummaryPage = () => {
   return (
     <React.StrictMode>
       <ThemeProvider theme={theme}>
         <Header />
         <AssessmentDivider text="Summary" />
-        <SendAssessment/>
+        <SummaryContent summary={constructSummary()} />
+        <SaveAssessment/>
       </ThemeProvider>
     </React.StrictMode>
   );
