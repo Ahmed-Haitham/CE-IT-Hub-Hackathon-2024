@@ -104,6 +104,7 @@ async def evaluate_assessment(assessment: schemas.EvaluateAssessment, db: AsyncS
         received, predicted = await client.get_diagnose(assessment)
         return {"received": received, "predicted": predicted}
 
+<<<<<<< HEAD
 @app.post("/uploadfile", response_model=dict)
 async def create_upload_file(
     file: UploadFile,
@@ -113,6 +114,11 @@ async def create_upload_file(
     print("Tutej 1")
     contents = await file.read()
     print("tutej", contents)
+=======
+@app.post("/uploadfile/", response_model=dict)
+async def create_upload_file(file: UploadFile, dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)):
+    contents = file.file.read()
+>>>>>>> 1ec04a4 (upload functionality and data models added)
     buffer = BytesIO(contents)
     await read_xlsx_and_load_to_tables(buffer, db)
     df = pd.read_excel(buffer)
