@@ -142,3 +142,39 @@ class AuthClient():
         return {"message": "Password changed successfully"}
 
     
+class PredictionClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+    async def get_diagnose(self, evaluation_request: schemas.EvaluateAssessment):
+        #TODO: Use real algorithm to predict
+        predicted = [
+            {
+                "disease": "Parkinson's Disease",
+                "probability": 0.8,
+                "symptoms": ["jittering", "trouble speaking"],
+                "mandatory_symptoms": ["jittering"],
+                "excluding_symptoms": ["ptosis"]
+            },
+            {
+                "disease": "Multiple Sclerosis",
+                "probability": 0.1,
+                "symptoms": ["numbness", "trouble walking"],
+                "mandatory_symptoms": ["numbness"],
+                "excluding_symptoms": []
+            },
+            {
+                "disease": "Alzheimer's Disease",
+                "probability": 0.05,
+                "symptoms": ["memory loss", "trouble concentrating"],
+                "mandatory_symptoms": [],
+                "excluding_symptoms": []
+            },
+            {
+                "disease": "Huntington's Disease",
+                "probability": 0.05,
+                "symptoms": ["involuntary movements", "trouble walking"],
+                "mandatory_symptoms": [],
+                "excluding_symptoms": ["ck_over_1000"]
+            }
+        ]
+        return predicted

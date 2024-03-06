@@ -15,7 +15,7 @@ from app.auth import (
     JWTBearer,
     decodeJWT,
 )
-from app.crud import BigTableClient, DiseaseGroupClient, SymptomClient, AuthClient
+from app.crud import BigTableClient, DiseaseGroupClient, SymptomClient, AuthClient, PredictionClient
 from app.db import engine, get_session, start_db
 
 app = FastAPI(title="WUM Neurological disease tool backend")
@@ -76,7 +76,9 @@ async def post_table_entry(table_entry: schemas.BaseBigTable, dependencies=Depen
 async def evaluate_assessment(assessment: schemas.EvaluateAssessment, db: AsyncSession = Depends(get_session)):
     #TODO: Integrate with Halyna's code to evaluate the assessment
     if assessment:
-        return {"received": assessment}
+        client = PredictionClient(db)
+        predicted = await client.get_diagnose(assessment)
+        return {"received": assessment, "predicted": predicted}
 
 @app.post("/uploadfile/", response_model=dict)
 def create_upload_file(file: UploadFile, dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)):
