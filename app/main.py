@@ -4,7 +4,7 @@ from datetime import datetime
 from io import BytesIO
 
 import pandas as pd
-from fastapi import Depends, FastAPI, HTTPException, UploadFile, status
+from fastapi import Depends, FastAPI, UploadFile
 # TODO: move sqlalchemy related code to crud/models
 from sqlalchemy import String, cast, delete, select
 from fastapi.middleware.cors import CORSMiddleware

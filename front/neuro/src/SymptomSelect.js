@@ -6,11 +6,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Switch from '@mui/material/Switch';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
+import InfoIcon from '@mui/icons-material/Info';
+import Tooltip from '@mui/material/Tooltip';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+
 const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelectedSymmetricity, setSelectedFamilyHistory, selected_progression, selected_symmetricity, selected_family_history, selectedOptions, handleProgressionToggle, handleSymmetricityToggle, familyHistoryToggle}) => {
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const [list_items, setListItems] = React.useState([]);
   async function getList() {
-    const response = await fetch('http://localhost:8000/symptoms?distinct_only=true');
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/symptoms?distinct_only=true`);
     const data = await response.json();
     return data;
   }
@@ -61,6 +69,40 @@ const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelec
           });
           return filtered;
         }}
+        renderOption={(props, option, { selected }) => {
+          let srcPath = option.symptom_media_path.startsWith('http') ? option.symptom_media_path : `/media/${option.symptom_media_path}`;
+          return (
+          <Box {...props}>
+            <Tooltip sx={{ maxWidth: 0.25 }} title={
+                <Card>
+                  <CardMedia
+                    component="iframe" 
+                    src={srcPath}
+                    alt="tooltip_media"
+                  />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {option.symptom_medical_name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {option.symptom_description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              }
+              placement="right"
+              arrow
+              componentsProps={{
+                tooltip: { sx: { bgcolor: 'transparent' , boxShadow: 'none',} },
+              }}
+              >
+              <Button>
+                <InfoIcon />
+              </Button>
+            </Tooltip>
+            {option.symptom_medical_name}
+          </Box>
+        )}}
         renderInput={(params) => (
           <TextField {...params} label="Symptoms" placeholder="Type a symptom" />
         )}
