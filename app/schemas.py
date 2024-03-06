@@ -2,13 +2,6 @@ import datetime
 
 from pydantic import BaseModel, ConfigDict
 
-from .models import (
-    CkLevelChoices,
-    OnsetChoices,
-    ProgressionChoices,
-    SymmetricityChoices,
-)
-
 
 class UserModel(BaseModel):
     username: str
@@ -43,10 +36,11 @@ class SymptomBigTable(BaseModel):
     # TODO: Enum validation should actually happen via pydantic models
     symptom_symmetricity: str
     symptom_progression: str
-    symptom_age_onset_group: str
+    first_symptom_age_onset_group: str
     symptom_media_path: str | None
     # TODO: can tags be null?
     symptom_tags: list[str] | None
+    
 
 
 class DiseaseGroupBigTable(BaseModel):
@@ -66,13 +60,14 @@ class BaseBigTable(BaseModel):
     # TODO: Enum validation should actually happen via pydantic models
     symptom_symmetricity: str
     symptom_progression: str
-    symptom_age_onset_group: str
+    first_symptom_age_onset_group: str
     symptom_media_path: str | None
     # TODO: can tags be null?
     symptom_tags: list[str] | None
     disease_group_medical_name: str
     disease_group_summary_message: str
     test_ck_level: str
+    gender: str
 
 class FullBigTable(BaseBigTable):
     model_config = ConfigDict(from_attributes=True)

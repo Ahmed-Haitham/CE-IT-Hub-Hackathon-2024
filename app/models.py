@@ -54,6 +54,7 @@ class ProgressionChoices(enum.Enum):
 
     stable = "stałe/postępujące"
     variable = "zmienne"
+    progressing = "postępujące"
 
 
 class OnsetChoices(enum.Enum):
@@ -81,6 +82,9 @@ class CkLevelChoices(enum.Enum):
     over_ten_k = "> 10000"
     not_tested = "nie było oznaczone (komunikat- wykonaj badanie)"
 
+class GenderChoices(enum.Enum):
+    female = "płeć żeńska"
+    male = "płeć męska"
 
 class OneBigTable(Base):
     __tablename__ = "big_table"
@@ -93,7 +97,7 @@ class OneBigTable(Base):
         Enum(SymmetricityChoices), default="na", nullable=False
     )
     symptom_progression = Column(Enum(ProgressionChoices), nullable=False)
-    symptom_age_onset_group = Column(Enum(OnsetChoices), nullable=False)
+    first_symptom_age_onset_group = Column(Enum(OnsetChoices), nullable=False)
     symptom_media_path = Column(String(128))
     symptom_tags = Column(ARRAY(String), nullable=False)
 
@@ -101,3 +105,5 @@ class OneBigTable(Base):
     disease_group_summary_message = Column(String(5000), nullable=False)
 
     test_ck_level = Column(Enum(CkLevelChoices), default="not_tested")
+
+    gender = Column(Enum(GenderChoices), nullable=False)
