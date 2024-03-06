@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import select, delete, cast, String
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi import HTTPException, status
@@ -136,7 +136,9 @@ class AuthClient():
 
     async def change_pass(self, change_pass_request):
         user = await self.session.scalar(
-        select(models.User).filter(models.User.username == change_pass_request.username)
+            select(models.User).filter(
+                models.User.username == change_pass_request.username
+            )
         )
         if user is None:
             raise HTTPException(
@@ -151,7 +153,15 @@ class AuthClient():
         await self.session.commit()
         return {"message": "Password changed successfully"}
 
-    
+    async def remove_tokens(self, user_id: str):
+        await self.session.execute(
+            delete(models.TokenTable).where(
+                cast(models.TokenTable.user_id, String) == user_id,
+            )
+        )
+        await self.session.commit()
+
+
 class PredictionClient():
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -159,7 +169,7 @@ class PredictionClient():
         user_input = user_input.dict()
         listlike_keys = {key: user_input[key] for key in ['selectedSymptoms', 'selectedProgression', 'selectedSymmetricity', 'selectedFamilyHistory']}
         df = pd.DataFrame(listlike_keys)
-        df ['selectedCk'] = user_input['selectedCk']
+        df["selectedCk"] = user_input["selectedCk"]
         df['selectedAgeOnset'] = user_input['selectedAgeOnset']
         df['gender'] = 'male' if user_input['female_gender'][0] == False else 'female'
         df.columns = [

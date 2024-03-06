@@ -1,22 +1,25 @@
 # app/main.py
 
-from datetime import datetime
+import os
 from io import BytesIO
 
 import pandas as pd
 from fastapi import Depends, FastAPI, UploadFile
-# TODO: move sqlalchemy related code to crud/models
-from sqlalchemy import String, cast, delete, select
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app import models, schemas
+from app import schemas
 from app.auth import (
     JWTBearer,
-    decodeJWT,
 )
-from app.crud import BigTableClient, DiseaseGroupClient, SymptomClient, AuthClient, PredictionClient
-from app.db import engine, get_session, start_db
+from app.crud import (
+    AuthClient,
+    BigTableClient,
+    DiseaseGroupClient,
+    PredictionClient,
+    SymptomClient,
+)
+from app.db import AsyncSessionFactory, engine, get_session, start_db
 
 app = FastAPI(title="WUM Neurological disease tool backend")
 
@@ -32,6 +35,19 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     await start_db(engine)
+    try:
+        db = AsyncSessionFactory()
+        client = AuthClient(db)
+        current_users = await client.get_users()
+        ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME")
+        ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
+
+        if ADMIN_USERNAME not in [user["username"] for user in current_users]:
+            user = schemas.UserModel(username=ADMIN_USERNAME, password=ADMIN_PASSWORD)
+            await client.add_user(user=user)
+    finally:
+        await db.close()
+
 
 @app.get("/")
 async def root():
@@ -92,13 +108,6 @@ def create_upload_file(file: UploadFile, dependencies=Depends(JWTBearer()), db: 
 
     return {"filename": file.filename, "columns": df.columns.to_list()}
 
-#TODO: remove this endpoint once live, as anyone can hit it to get a JWT key now with admin privileges
-@app.post("/register", response_model=dict[str, str])
-async def register_user(user: schemas.UserModel, db: AsyncSession = Depends(get_session)):
-    client = AuthClient(db)
-    return await client.add_user(user)
-
-
 @app.post("/login", response_model=schemas.TokenSchema)
 async def login(user_credentials: schemas.UserModel, db: AsyncSession = Depends(get_session)):
     client = AuthClient(db)
@@ -119,22 +128,18 @@ async def change_password(
     client = AuthClient(db)
     return await client.change_pass(request)
     
-'''
+"""
 # TODO: fix issue in logout
 @app.post("/logout")
 async def logout(
     dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)
 ):
+    client = AuthClient(db)
     token = dependencies
     payload = decodeJWT(token)
-    user_id = payload["sub"]
+    user_id = str(payload["sub"])
 
-    await db.execute(
-        delete(models.TokenTable).where(
-            cast(models.TokenTable.user_id, String) == str(user_id),
-        )
-    )
-    await db.commit()
+    await client.remove_tokens(user_id=user_id)
 
     return {"message": "Logout Successfully"}
-'''
+"""
