@@ -18,7 +18,7 @@ const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelec
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
   const [list_items, setListItems] = React.useState([]);
   async function getList() {
-    const response = await fetch('http://localhost:8000/symptoms?distinct_only=true');
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/symptoms?distinct_only=true`);
     const data = await response.json();
     return data;
   }
