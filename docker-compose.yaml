@@ -27,7 +27,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
     volumes:
       - .:/app
     ports:
@@ -38,6 +37,9 @@ services:
     build:
       context: front
       dockerfile: Dockerfile
+    volumes:
+      - .:/app
+      - ./front/neuro/media:/front/neuro/public/media
     ports:
       - "3000:3000"
     environment:

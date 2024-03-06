@@ -1,6 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from fastapi import HTTPException, status
 from fastapi.encoders import jsonable_encoder
 
 from . import models, schemas, auth

@@ -75,7 +75,8 @@ const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelec
                 <Card>
                   <CardMedia
                     component="iframe" 
-                    src = "https://static2.feelgoodcontacts.net/images/ech/img/droopy-eyelids-ptosis%E2%80%93causes-and-treatments-2.webp"
+                    src={`/media/${option.symptom_media_path}`}
+                    //src = "https://static2.feelgoodcontacts.net/images/ech/img/droopy-eyelids-ptosis%E2%80%93causes-and-treatments-2.webp"
                     //TODO: Turn this back on when we have images
                     //image={option.symptom_media_path}
                     alt="tooltip_media"
