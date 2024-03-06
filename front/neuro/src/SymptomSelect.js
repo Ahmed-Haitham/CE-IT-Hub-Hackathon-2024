@@ -69,16 +69,15 @@ const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelec
           });
           return filtered;
         }}
-        renderOption={(props, option, { selected }) => (
+        renderOption={(props, option, { selected }) => {
+          let srcPath = option.symptom_media_path.startsWith('http') ? option.symptom_media_path : `/media/${option.symptom_media_path}`;
+          return (
           <Box {...props}>
             <Tooltip sx={{ maxWidth: 0.25 }} title={
                 <Card>
                   <CardMedia
                     component="iframe" 
                     src={`/media/${option.symptom_media_path}`}
-                    //src = "https://static2.feelgoodcontacts.net/images/ech/img/droopy-eyelids-ptosis%E2%80%93causes-and-treatments-2.webp"
-                    //TODO: Turn this back on when we have images
-                    //image={option.symptom_media_path}
                     alt="tooltip_media"
                   />
                   <CardContent>
@@ -103,7 +102,7 @@ const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelec
             </Tooltip>
             {option.symptom_medical_name}
           </Box>
-        )}
+        )}}
         renderInput={(params) => (
           <TextField {...params} label="Symptoms" placeholder="Type a symptom" />
         )}
