@@ -7,8 +7,13 @@ import Switch from '@mui/material/Switch';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-const FinalQuestions = ({selected_ck, selected_age_onset, handleCKToggle, handleAgeOnsetToggle}) => {
+const FinalQuestions = ({selected_ck, selected_age_onset, handleCKToggle, handleAgeOnsetToggle, female_gender, handleGenderToggle, setSelectedGender}) => {
     const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
+    
+    React.useEffect(() => {
+        setSelectedGender(new Array(1).fill(true));
+      }, []);
+
     //https://www.iloveimg.com/crop-image - Crop the image
     //https://convertio.co/jpg-svg/ - Convert to svg
     //https://www.svgviewer.dev/ - Use optimize here and pay attention to the viewBox settings
@@ -193,7 +198,10 @@ const FinalQuestions = ({selected_ck, selected_age_onset, handleCKToggle, handle
                     <Grid item xs={9}>
                         <Stack direction="row" spacing={1} alignItems="center">
                             <Typography>Male</Typography>
-                            <MaterialUISwitch defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
+                            <MaterialUISwitch 
+                                checked={female_gender[0]}
+                                onChange={() => handleGenderToggle(0)}
+                                inputProps={{ 'aria-label': 'gender_toggle' }} />
                             <Typography>Female</Typography>
                         </Stack>
                     </Grid>

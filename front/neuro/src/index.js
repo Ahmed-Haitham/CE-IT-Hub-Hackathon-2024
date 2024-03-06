@@ -80,6 +80,7 @@ function App() {
   const [selected_family_history, setSelectedFamilyHistory] = React.useState([]);
   const [selected_dropdown_symptoms, setSelectedDropdownSelection] = React.useState([]);
   //state for final questions
+  const [female_gender, setSelectedGender] = React.useState([]);
   const [selected_ck, setSelectedCK] = React.useState({
     selectedCk: 'not_tested',
   });
@@ -120,6 +121,13 @@ function App() {
   const handleAgeOnsetToggle = (value) => {
     setSelectedAgeOnset({ ...selected_age_onset, selectedAgeOnset: value });
   };
+  const handleGenderToggle = (index) => {
+    setSelectedGender(prevState => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      return newState;
+    });
+  };
 
   //function for submitting the assessment
   const handleSubmit = () => {
@@ -130,7 +138,8 @@ function App() {
       selectedSymmetricity: selected_symmetricity,
       selectedFamilyHistory: selected_family_history,
       selectedCk: selected_ck.selectedCk,
-      selectedAgeOnset: selected_age_onset.selectedAgeOnset
+      selectedAgeOnset: selected_age_onset.selectedAgeOnset,
+      female_gender: female_gender
     };
 
     fetch(`${process.env.REACT_APP_API_URL}/evaluateAssessment`, {
@@ -175,8 +184,11 @@ function App() {
         <FinalQuestions
           selected_ck={selected_ck.selectedCk}
           selected_age_onset={selected_age_onset.selectedAgeOnset}
+          female_gender={female_gender}
           handleCKToggle={handleCKToggle}
           handleAgeOnsetToggle={handleAgeOnsetToggle}
+          handleGenderToggle={handleGenderToggle}
+          setSelectedGender={setSelectedGender}
         />
         <AssessmentDivider text="Are you ready to submit?" />
         <SendAssessment onSubmit={handleSubmit} />
