@@ -89,3 +89,4 @@ class EvaluateAssessment(BaseModel):
     selectedFamilyHistory: list[bool]
     selectedCk: str
     selectedAgeOnset: str
+    female_gender: list[bool]
