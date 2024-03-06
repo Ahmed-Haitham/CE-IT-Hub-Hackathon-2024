@@ -7,10 +7,22 @@ import Assessment from './ActorAssessment';
 import SymptomSelection from './SymptomSelect';
 import FinalQuestions from './FinalQuestions';
 import SendAssessment from './EndAssessment';
+import SaveAssessment from './Save';
 import Steps from './Footer';
-
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+
+const constructSummary = () => {
+  // Customize the template based on your requirements
+  // return `Since you have ${symptoms.join(', ')}, you probably have ${condition}.`;
+  return `Since you have *some symptoms*, you should go to *doctor*.`;
+};
 
 const theme = createTheme({
   palette: {
@@ -22,6 +34,40 @@ const theme = createTheme({
     },
   },
 });
+
+const SummaryContent = ({ summary }) => {
+  return (
+    <Paper variant="elevation">{'Since you have *some symptoms*, you should to to *doctor*.'}</Paper>
+    // <Box sx={{ padding: '1em' }}>
+    //   <Typography variant="body1">{summary}</Typography>
+    // </Box>
+  );
+};
+
+const SummaryPage = () => {
+  return (
+    <React.StrictMode>
+      <ThemeProvider theme={theme}>
+        <Header />
+        <AssessmentDivider text="Summary" />
+        <SummaryContent summary={constructSummary()} />
+        <SaveAssessment />
+      </ThemeProvider>
+    </React.StrictMode>
+  );
+};
+
+// Add more links here
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+  },
+  {
+    path: "summary",
+    element: <SummaryPage />,
+  },
+]);
 
 function App() {
   //state for actor selection
@@ -48,16 +94,16 @@ function App() {
   //functions for symptom selection
   const handleProgressionToggle = (index, value) => () => {
     setSelectedProgression(prevState => {
-        const newState = [...prevState];
-        newState[index] = value;
-        return newState;
+      const newState = [...prevState];
+      newState[index] = value;
+      return newState;
     });
   };
   const handleSymmetricityToggle = (index, value) => () => {
     setSelectedSymmetricity(prevState => {
-        const newState = [...prevState];
-        newState[index] = value;
-        return newState;
+      const newState = [...prevState];
+      newState[index] = value;
+      return newState;
     });
   };
   const familyHistoryToggle = (index) => {
@@ -74,7 +120,7 @@ function App() {
   const handleAgeOnsetToggle = (value) => {
     setSelectedAgeOnset({ ...selected_age_onset, selectedAgeOnset: value });
   };
-  
+
   //function for submitting the assessment
   const handleSubmit = () => {
     const requestData = {
@@ -101,18 +147,18 @@ function App() {
         console.log(error);
       });
   };
-  
+
   return (
     <React.StrictMode>
       <ThemeProvider theme={theme}>
         <Header />
         <AssessmentDivider text="Do the assessment as" />
-        <Assessment 
+        <Assessment
           selected={assessment_actor.selectedActor}
           handleToggle={handleActorChange}
         />
         <AssessmentDivider text="Which symptoms are present?" />
-        <SymptomSelection 
+        <SymptomSelection
           handleProgressionToggle={handleProgressionToggle}
           handleSymmetricityToggle={handleSymmetricityToggle}
           familyHistoryToggle={familyHistoryToggle}
@@ -126,14 +172,14 @@ function App() {
           setSelectedOptions={setSelectedDropdownSelection}
         />
         <AssessmentDivider text="Now provide final details" />
-        <FinalQuestions 
+        <FinalQuestions
           selected_ck={selected_ck.selectedCk}
           selected_age_onset={selected_age_onset.selectedAgeOnset}
           handleCKToggle={handleCKToggle}
           handleAgeOnsetToggle={handleAgeOnsetToggle}
         />
         <AssessmentDivider text="Are you ready to submit?" />
-        <SendAssessment onSubmit={handleSubmit}/>
+        <SendAssessment onSubmit={handleSubmit} />
         <Steps />
       </ThemeProvider>
     </React.StrictMode>
@@ -141,4 +187,6 @@ function App() {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
+root.render(
+  <RouterProvider router={router} />
+);
