@@ -6,13 +6,8 @@ import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import SchoolIcon from '@mui/icons-material/School';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 
-const AssessmentActor = () => {
-  const [selected, setSelected] = React.useState('patient');
+const AssessmentActor = ({ selected, handleToggle }) => {
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
-
-  const handleToggle = (value) => () => {
-    setSelected(value);
-  };
 
   return (
     <Box sx={{ padding: '0 2em', display: 'flex', justifyContent: 'center' }}>
@@ -26,7 +21,7 @@ const AssessmentActor = () => {
         <ToggleButton
           value="patient"
           selected={selected === 'patient'}
-          onChange={handleToggle('patient')}
+          onChange={() => handleToggle('patient')}
           aria-label="patient"
         >
           <Box marginRight={2} display="flex" alignItems="center">
@@ -37,7 +32,7 @@ const AssessmentActor = () => {
         <ToggleButton
           value="family"
           selected={selected === 'family'}
-          onChange={handleToggle('family')}
+          onChange={() => handleToggle('family')}
           aria-label="family"
         >
           <Box marginRight={2} display="flex" alignItems="center">
@@ -48,7 +43,7 @@ const AssessmentActor = () => {
         <ToggleButton
           value="student"
           selected={selected === 'student'}
-          onChange={handleToggle('student')}
+          onChange={() => handleToggle('student')}
           aria-label="student"
         >
           <Box marginRight={2} display="flex" alignItems="center">
@@ -59,7 +54,7 @@ const AssessmentActor = () => {
         <ToggleButton
           value="doctor"
           selected={selected === 'doctor'}
-          onChange={handleToggle('doctor')}
+          onChange={() => handleToggle('doctor')}
           aria-label="doctor"
         >
           <Box marginRight={2} display="flex" alignItems="center">

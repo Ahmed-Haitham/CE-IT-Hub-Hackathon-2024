@@ -17,7 +17,7 @@ const Steps = () => {
         }}
       >
         <Container maxWidth={false}>
-          <Grid container spacing={2} justifyContent="space-between">
+          <Grid container spacing={2} justifyContent="center">
           <Box sx={{ width: '100%' }}>
           <p></p>
             <Stepper activeStep={0} alternativeLabel>
