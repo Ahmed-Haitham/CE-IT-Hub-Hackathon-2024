@@ -77,7 +77,7 @@ const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelec
                 <Card>
                   <CardMedia
                     component="iframe" 
-                    src={`/media/${option.symptom_media_path}`}
+                    src={srcPath}
                     alt="tooltip_media"
                   />
                   <CardContent>
