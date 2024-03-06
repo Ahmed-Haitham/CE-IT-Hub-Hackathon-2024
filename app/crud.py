@@ -1,66 +1,113 @@
-from sqlalchemy import select, delete, cast, String
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import select, text, delete, cast, String
 from fastapi import HTTPException, status
 from fastapi.encoders import jsonable_encoder
-
 from sqlalchemy.exc import DBAPIError
-from asyncpg.exceptions import InvalidTextRepresentationError
 
 from . import models, schemas, auth
+from .db import Base
 import pandas as pd
 
-class SymptomClient():
+class SymptomDefinitionsClient():
     def __init__(self, session: AsyncSession):
         self.session = session
-    async def get_symptom(self, symptom_name: str):
-        statement = select(models.OneBigTable.symptom_medical_name, models.OneBigTable.symptom_description, models.OneBigTable.symptom_symmetricity, models.OneBigTable.symptom_progression, models.OneBigTable.symptom_progression, models.OneBigTable.first_symptom_age_onset_group, models.OneBigTable.symptom_media_path, models.OneBigTable.symptom_tags).filter(models.OneBigTable.symptom_medical_name == symptom_name)
-        #always require distinct for get single item endpoints
-        statement = statement.distinct()
-        result = await self.session.execute(statement)
-        x = [row._mapping for row in result.all()]
-        assert len(x)==1
-        return x[0]
+
+    async def get_symptom(self, entry_id: int):
+        statement = select(models.SymptomDefinitions).filter(models.SymptomDefinitions.id == entry_id)
+        result = await self.session.scalars(statement)
+        return result.first()
         
-    async def list_symptoms(self, distinct_only, search_for, skip: int = 0, limit: int = 1000):
-        statement = select(models.OneBigTable.symptom_medical_name, models.OneBigTable.symptom_description, models.OneBigTable.symptom_symmetricity, models.OneBigTable.symptom_progression, models.OneBigTable.symptom_progression, models.OneBigTable.first_symptom_age_onset_group, models.OneBigTable.symptom_media_path, models.OneBigTable.symptom_tags)
-        if distinct_only:
-            statement = statement.distinct()
+    async def list_symptoms(self, search_for: str, skip: int = 0, limit: int = 1000):
+        statement = select(models.SymptomDefinitions)
         if search_for:
             statement = statement.filter(
-                #ilike is case insensitive like
-                models.OneBigTable.symptom_medical_name.ilike('%' + search_for + '%') |
-                #could not find a way to search for case insensitive tags in an array
-                #could not find a way to seach for parts of a tag in an array
-                models.OneBigTable.symptom_tags.contains([search_for]),
-                )
+                models.SymptomDefinitions.symptom_name.ilike('%' + search_for + '%')
+            )
         statement = statement.offset(skip).limit(limit)
-        result = await self.session.execute(statement)
-        return [row._mapping for row in result.all()]
+        result = await self.session.scalars(statement)
+        result.unique()
+        return result.all()
+    
+    async def populate_to_table(self, data):
+        
+        model = models.SymptomDefinitions
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"
+    
 
-class DiseaseGroupClient():
+class DiseaseGroupDefinitionsClient():
     def __init__(self, session: AsyncSession):
         self.session = session
-    async def get_disease_group(self, disease_group_name: str):
-        statement = select(models.OneBigTable.disease_group_medical_name, models.OneBigTable.disease_group_summary_message, models.OneBigTable.test_ck_level).filter(models.OneBigTable.disease_group_medical_name == disease_group_name)
-        statement = statement.distinct()
-        result =  await self.session.execute(statement)
-        x = [row._mapping for row in result.all()]
-        assert len(x)==1
-        return x[0]
 
-    async def list_disease_groups(self, distinct_only, search_for: str, skip: int = 0, limit: int = 1000):
-        statement = select(models.OneBigTable.disease_group_medical_name, models.OneBigTable.disease_group_summary_message, models.OneBigTable.test_ck_level)
-        if distinct_only:
-            statement = statement.distinct()
+    async def get_disease_group(self, entry_id: int):
+        statement = select(models.DiseaseGroupDefinitions).filter(models.DiseaseGroupDefinitions.id == entry_id)
+        result = await self.session.scalars(statement)
+        return result.first()
+
+    async def list_disease_groups(self, search_for: str, skip: int = 0, limit: int = 1000):
+        statement = select(models.DiseaseGroupDefinitions)
         if search_for:
             statement = statement.filter(
-                models.OneBigTable.disease_group_medical_name.ilike('%' + search_for + '%')
-                )
+                models.DiseaseGroupDefinitions.disease_group_name.ilike('%' + search_for + '%')
+            )
         statement = statement.offset(skip).limit(limit)
-        result = await self.session.execute(statement)
-        x = [row._mapping for row in result.all()]
-        return x
+        result = await self.session.scalars(statement)
+        result.unique()
+        return result.all()
+    
+    async def populate_to_table(self, data):
+        
+        model = models.DiseaseGroupDefinitions
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"
+
+
+class SymptomsValidationClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def populate_to_table(self, data):
+     
+        model = models.SymptomsValidation
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY CASCADE")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"
+
+
+class SymptomsClient():
+    def __init__(self, session: AsyncSession):
+        self.session = session
+
+    async def populate_to_table(self, data):
+      
+        model = models.Symptoms
+        table_instance = Base.metadata.tables[model.__tablename__]
+        truncate_statement = text(f"TRUNCATE TABLE {table_instance} RESTART IDENTITY")
+        await self.session.execute(truncate_statement)
+        await self.session.commit()
+        stmt = insert(model).values(data)
+        await self.session.execute(stmt)
+        await self.session.commit()
+        return f"Table {table_instance} has been overwritten"
+ 
 
 class BigTableClient():
     def __init__(self, session: AsyncSession):
