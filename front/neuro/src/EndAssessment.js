@@ -3,13 +3,14 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SendIcon from '@mui/icons-material/Send';
 import Box from '@mui/material/Box';
 
-const SendAssessment = () => {
+const SendAssessment = ({ onSubmit }) => {
     
     const [loading, setLoading] = React.useState(false);
 
-    function handleClick() {
+    const handleClick = () => {
         setLoading(true);
-    }
+        onSubmit(); // Call onSubmit function passed from parent component
+    };
 
     return (
         <Box sx={{ padding: '0 2em', mb: 15, display: 'flex', justifyContent: 'center' }}>
