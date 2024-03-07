@@ -13,8 +13,6 @@ import FinalQuestions from './components/user_inputs/FinalQuestions';
 import SendAssessment from './components/user_inputs/SendAssessment';
 
 function App() {
-    //prediction state init
-    const [prediction, setPrediction] = React.useState(null);
 
     //state for actor selection
     const [assessment_actor, setAssessmentActor] = React.useState({
@@ -98,17 +96,11 @@ function App() {
         });
     
         const responseData = await response.json();
-        setPrediction(responseData);
-        console.log(responseData);
         return responseData;
       } catch (error) {
         console.error('Error:', error);
       }
     };
-
-    useEffect(() => {
-      console.log(prediction);
-    }, [prediction]);
   
     return (
       <React.StrictMode>
@@ -146,7 +138,6 @@ function App() {
           <AssessmentDivider text="Are you ready to submit?" />
           <SendAssessment 
             onSubmit={handleSubmit} 
-            prediction={prediction}
           />
           <Steps />
         </ThemeProvider>

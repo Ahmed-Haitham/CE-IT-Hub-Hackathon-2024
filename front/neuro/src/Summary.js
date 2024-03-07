@@ -16,10 +16,6 @@ import { useEffect } from 'react';
 const Summary = () => {
     const location = useLocation();
     const data = location.state;
-    console.log(data)
-    //useEffect(() => {
-      //console.log(data);
-      //}, [data]);
       return (
         <Paper variant="elevation">
           <div>

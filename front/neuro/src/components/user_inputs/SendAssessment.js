@@ -8,13 +8,12 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-const SendAssessment = ({ prediction, onSubmit }) => {
+const SendAssessment = ({ onSubmit }) => {
 
     const navigate = useNavigate();
 
     const handleClick = async () => {
         const result = await onSubmit();
-        console.log(result);
         navigate("/summary", { state: result });
     };
 
