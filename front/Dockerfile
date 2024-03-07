@@ -18,4 +18,4 @@ COPY . ./
 # set work directory
 WORKDIR /front/neuro
 
-CMD [ "npm", "start", "dev" ]
+CMD [ "npm", "start" ]

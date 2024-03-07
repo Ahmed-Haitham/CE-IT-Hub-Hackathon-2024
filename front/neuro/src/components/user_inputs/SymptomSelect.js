@@ -16,7 +16,7 @@ import Typography from '@mui/material/Typography';
 
 const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSelectedProgression, setSelectedSymmetricity, setSelectedFamilyHistory, selected_progression, selected_symmetricity, selected_family_history, selectedOptions, handleProgressionToggle, handleSymmetricityToggle, familyHistoryToggle}) => {
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
-  
+
   async function getList() {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/symptoms?distinct_only=true`);
     const data = await response.json();
@@ -112,17 +112,17 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
       <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '1em' }}>
         <List>
           <Grid container spacing={3}>
-            <Grid item xs={3}><strong>Symptom</strong></Grid>
-            <Grid item xs={3}><strong>Symptom Progression</strong></Grid>
-            <Grid item xs={3}><strong>Symptom Symmetricity</strong></Grid>
-            <Grid item xs={3}><strong>In Family History</strong></Grid>
+            <Grid item xs={isSmallScreen ? 6 : 3}><strong>Symptom</strong></Grid>
+            <Grid item xs={isSmallScreen ? 6 : 3}><strong>Symptom Progression</strong></Grid>
+            <Grid item xs={isSmallScreen ? 6 : 3}><strong>Symptom Symmetricity</strong></Grid>
+            <Grid item xs={isSmallScreen ? 6 : 3}><strong>In Family History</strong></Grid>
           </Grid>
           {/*List contains multiselect selections*/}
           {selectedOptions.map((option, index) => (
           <ListItem key={index}>
             {/*1st item: delete button*/}
             <Grid container spacing={3}>
-              <Grid item xs={3} container direction="row" alignItems="center">
+              <Grid item xs={isSmallScreen ? 6 : 3} container direction="row" alignItems="center">
                 {/*1-A item: delete button*/}
                 <IconButton edge="start" aria-label="delete" onClick={handleDelete(option)}>
                   <DeleteIcon />
@@ -131,7 +131,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                 <ListItemText primary={option.symptom_medical_name} />
               </Grid>
               {/*2nd item: box with progression choices group*/}
-              <Grid item xs={3} flexDirection="row" alignItems="center">
+              <Grid item xs={isSmallScreen ? 6 : 3} flexDirection="row" alignItems="center">
                 <ToggleButtonGroup 
                   value={selected_progression[index]}
                   exclusive
@@ -163,7 +163,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                 </ToggleButtonGroup>
               </Grid>
               {/*3rd item: box with symmetricity choices group*/}
-              <Grid item xs={3} flexDirection="row" alignItems="center">
+              <Grid item xs={isSmallScreen ? 6 : 3} flexDirection="row" alignItems="center">
                 <ToggleButtonGroup 
                   value={selected_symmetricity[index]}
                   onChange={handleSymmetricityToggle}
@@ -194,11 +194,11 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                 </ToggleButtonGroup>
               </Grid>
               {/*4th item: switch for faimily history*/}
-              <Grid item xs={3} flexDirection="row" alignItems="center">
+              <Grid item xs={isSmallScreen ? 6 : 3} flexDirection="row" alignItems="center">
                 <Switch
-                  checked={selected_family_history[index]}
-                  onChange={() => familyHistoryToggle(index)}
-                  name={`selected_family_history_${index}`}
+                    checked={selected_family_history[index]}
+                    onChange={() => familyHistoryToggle(index)}
+                    name={`selected_family_history_${index}`}
                 />
               </Grid>
             </Grid>
