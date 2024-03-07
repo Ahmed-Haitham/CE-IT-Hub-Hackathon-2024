@@ -5,7 +5,7 @@ import App from './App';
 import SummaryPage from './Summary';
 import Login from './Login';
 import Upload from './components/admin_panel/Upload'
-import { UserProvider } from './context/UserContext'
+import { UserProvider } from './components/utils/UserContext'
 
 import {
   createBrowserRouter,
@@ -16,11 +16,11 @@ import {
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <UserProvider><App /></UserProvider>,
   },
   {
     path: "summary",
-    element: <SummaryPage />,
+    element: <UserProvider><SummaryPage /></UserProvider>,
   },
   {
     path: "login",
