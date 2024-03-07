@@ -1,19 +1,33 @@
 import React, { createContext, useEffect, useState } from "react";
 
-export const UserContext = createContext()
+export const UserContext = createContext();
 
 export const UserProvider = (props) => {
-    const [token, setToken] = useState(localStorage.getItem("diseaseAppToken"));
+  const [token, setToken] = useState(localStorage.getItem("diseaseFindingToken"));
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            const requestOptions = {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + token,
-                }
-            }
-        }
-    })
-}
+  useEffect(() => {
+    const fetchUser = async () => {
+      const requestOptions = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, requestOptions);
+
+      if (!response.ok) {
+        setToken(null);
+      }
+      localStorage.setItem("diseaseFindingToken", token);
+    };
+    fetchUser();
+  }, [token]);
+
+  return (
+    <UserContext.Provider value={[token, setToken]}>
+      {props.children}
+    </UserContext.Provider>
+  );
+};

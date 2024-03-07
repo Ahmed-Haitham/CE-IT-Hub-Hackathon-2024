@@ -1,23 +1,25 @@
+import Paper from '@mui/material/Paper';
+import { ThemeProvider } from '@mui/material/styles';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import Header from './Header';
-import AssessmentDivider from './AssessmentDivider';
 import Assessment from './ActorAssessment';
-import SymptomSelection from './SymptomSelect';
-import FinalQuestions from './FinalQuestions';
+import AssessmentDivider from './AssessmentDivider';
+import { UserProvider } from "./context/UserContext";
 import SendAssessment from './EndAssessment';
-import SaveAssessment from './Save';
+import FinalQuestions from './FinalQuestions';
 import Steps from './Footer';
-import { ThemeProvider } from '@mui/material/styles';
-import Theme from "./Theme"
-import Paper from '@mui/material/Paper';
+import Header from './Header';
+import './index.css';
+import SaveAssessment from './Save';
+import SymptomSelection from './SymptomSelect';
+import Theme from "./Theme";
 
 import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
 import Login from './components/Login';
+import Upload from './components/Upload';
 
 const constructSummary = () => {
   // Customize the template based on your requirements
@@ -60,7 +62,11 @@ const router = createBrowserRouter([
   },
   {
     path: "login",
-    element: <Login />
+    element: <UserProvider><Login /></UserProvider>,
+  },
+  {
+    path: "upload",
+    element: <UserProvider><Upload /></UserProvider>,
   }
 ]);
 

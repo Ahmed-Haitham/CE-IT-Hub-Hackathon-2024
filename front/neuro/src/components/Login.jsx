@@ -10,22 +10,21 @@ const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, seterrorMessage] = useState("");
-    // const [, setToken] = useContext(UserContext);
+    const [, setToken] = useContext(UserContext);
 
   const submitLogin = async () => {
     const requestOptions = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: username, hashed_password: password }),
+      body: JSON.stringify({ username: username, password: password }),
     };
 
-    const response = await fetch("/api/login", requestOptions);
-    // const data = await response.json();
-    const data = JSON.stringify({ access_token: 'asdad', detail: 'dadsa'})
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, requestOptions);
+    const data = await response.json();
     if (!response.ok) {
       seterrorMessage(data.detail);
     } else {
-    //   setToken(data.access_token);
+      setToken(data.access_token);
     }
   };
 
@@ -39,8 +38,7 @@ const Login = () => {
             <ThemeProvider theme={Theme}>
                 <Header />
                 <div className="column">
-                {/* <form className="box" onSubmit={handleSubmit}> */}
-                <form className="box">
+                <form className="box" onSubmit={handleSubmit}>
                     <h1 className="title has-text-centered">Login</h1>
                     <div className="field">
                     <label className="label">Username</label>
