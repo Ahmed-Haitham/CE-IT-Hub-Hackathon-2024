@@ -138,7 +138,9 @@ function App() {
           <SendAssessment 
             onSubmit={handleSubmit} 
           />
-          <Steps />
+          <Steps
+            step_number={0}
+          />
         </ThemeProvider>
       </React.StrictMode>
     );
