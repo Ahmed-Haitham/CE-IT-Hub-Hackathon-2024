@@ -4,17 +4,19 @@ import Theme from "./components/utils/Theme"
 
 import Header from './components/utils/Header';
 import AssessmentDivider from './components/utils/AssessmentDivider';
+import Steps from './components/utils/Footer';
 
-import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 import PrintAssessment from './components/summary_page/PrintAssessment';
 
 import { useLocation } from 'react-router-dom';
+
 
 const Summary = () => {
     const location = useLocation();
     const data = location.state;
       return (
-        <Paper variant="elevation">
+        <Box sx={{ padding: '0 2em', display: 'flex', justifyCotent: 'center' }}>
           <div>
             {data.received.map((item, index) => (
               <div key={index}>
@@ -31,7 +33,7 @@ const Summary = () => {
               </div>
             ))}
           </div>
-        </Paper>
+        </Box>
       );
   };
 
@@ -43,6 +45,9 @@ const SummaryPage = () => {
           <AssessmentDivider text="Summary" />
           <Summary />
           <PrintAssessment />
+          <Steps
+            step_number={1}
+          />
         </ThemeProvider>
       </React.StrictMode>
     );

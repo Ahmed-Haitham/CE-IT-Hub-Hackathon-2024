@@ -190,7 +190,7 @@ const FinalQuestions = ({selected_ck, selected_age_onset, handleCKToggle, handle
                 </Grid>
             </Box>
             <p></p>
-            <Box sx={{ padding: '0 2em', display: 'flex', justifyCotent: 'center' }}>
+            <Box sx={{ padding: '0 2em', display: 'flex', justifyContent: 'center' }}>
                 <Grid container spacing={3} alignItems="center" >
                     <Grid item xs={3}>
                         <p>Select your gender</p>

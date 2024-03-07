@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Grid, Box, Stepper, Step, StepLabel, Typography, Container} from '@mui/material';
 
-const Steps = () => {
+const Steps = ({step_number}) => {
     const steps = [
         'Fill in symptom details',
         'Receive your assessment',
@@ -20,7 +20,7 @@ const Steps = () => {
           <Grid container spacing={2} justifyContent="center">
           <Box sx={{ width: '100%' }}>
           <p></p>
-            <Stepper activeStep={0} alternativeLabel>
+            <Stepper activeStep={step_number} alternativeLabel>
                 {steps.map((label) => (
                 <Step key={label}>
                     <StepLabel>{label}</StepLabel>

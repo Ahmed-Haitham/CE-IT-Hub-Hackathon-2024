@@ -8,7 +8,6 @@ import Alert from '@mui/material/Alert';
 
 const PrintAssessment = () => {
     const [showAlert, setShowAlert] = React.useState(false);
-    const [open, setOpen] = React.useState(false);
     function handleClick() {
         setShowAlert(true);
         window.print();
