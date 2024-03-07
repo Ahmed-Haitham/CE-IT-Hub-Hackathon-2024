@@ -154,11 +154,18 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                     Variable
                   </ToggleButton>
                   <ToggleButton
-                    value="progressing"
-                    onChange={handleProgressionToggle(index, 'progressing')}
-                    aria-label="progressing"
+                    value="slowProgressing"
+                    onChange={handleProgressionToggle(index, 'slowProgressing')}
+                    aria-label="slowProgressing"
                   >
-                    Progressing
+                    Slow Progressing
+                  </ToggleButton>
+                  <ToggleButton
+                    value="fastProgressing"
+                    onChange={handleProgressionToggle(index, 'fastProgressing')}
+                    aria-label="fastProgressing"
+                  >
+                    Fast Progressing
                   </ToggleButton>
                 </ToggleButtonGroup>
               </Grid>
