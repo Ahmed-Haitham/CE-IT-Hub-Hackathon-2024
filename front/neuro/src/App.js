@@ -12,6 +12,8 @@ import FinalQuestions from './components/user_inputs/FinalQuestions';
 import SendAssessment from './components/user_inputs/SendAssessment';
 
 function App() {
+    //selection state  
+    const [list_items, setListItems] = React.useState([]);
 
     //state for actor selection
     const [assessment_actor, setAssessmentActor] = React.useState({
@@ -112,6 +114,8 @@ function App() {
           />
           <AssessmentDivider text="Which symptoms are present?" />
           <SymptomSelection
+            list_items={list_items}
+            setListItems={setListItems}
             handleProgressionToggle={handleProgressionToggle}
             handleSymmetricityToggle={handleSymmetricityToggle}
             familyHistoryToggle={familyHistoryToggle}

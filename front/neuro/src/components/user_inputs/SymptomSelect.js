@@ -14,9 +14,9 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 
-const SymptomSelection = ({ setSelectedOptions, setSelectedProgression, setSelectedSymmetricity, setSelectedFamilyHistory, selected_progression, selected_symmetricity, selected_family_history, selectedOptions, handleProgressionToggle, handleSymmetricityToggle, familyHistoryToggle}) => {
+const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSelectedProgression, setSelectedSymmetricity, setSelectedFamilyHistory, selected_progression, selected_symmetricity, selected_family_history, selectedOptions, handleProgressionToggle, handleSymmetricityToggle, familyHistoryToggle}) => {
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
-  const [list_items, setListItems] = React.useState([]);
+  
   async function getList() {
     const response = await fetch(`${process.env.REACT_APP_API_URL}/symptoms?distinct_only=true`);
     const data = await response.json();
