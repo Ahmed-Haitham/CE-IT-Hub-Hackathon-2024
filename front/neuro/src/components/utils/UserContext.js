@@ -1,11 +1,11 @@
-import React, { createContext, useEffect, useState } from "react";
+import React from "react";
 
-export const UserContext = createContext();
+export const UserContext = React.createContext();
 
 export const UserProvider = (props) => {
-  const [token, setToken] = useState(localStorage.getItem("diseaseFindingToken"));
+  const [token, setToken] = React.useState(localStorage.getItem("diseaseFindingToken"));
 
-  useEffect(() => {
+  React.useEffect(() => {
     const fetchUser = async () => {
       const requestOptions = {
         method: "GET",

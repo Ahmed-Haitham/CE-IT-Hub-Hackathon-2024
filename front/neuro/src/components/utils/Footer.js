@@ -30,7 +30,7 @@ const Steps = ({step_number}) => {
             <p></p>
             </Box>
             <Grid >
-              <Typography variant="subtitle1" color="text.primary" gutterBottom>
+              <Typography variant="subtitle1" color="text.primary" gutterBottom align="center">
                 Disclaimer: This tool is not intended to replace a doctor's diagnosis of neural disease. Rather, it can be helpful to point you to the right specialist to consult.
               </Typography>
             </Grid>
