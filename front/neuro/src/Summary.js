@@ -10,20 +10,36 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import PrintAssessment from './components/summary_page/PrintAssessment';
 
-const constructSummary = () => {
-    // Customize the template based on your requirements
-    // return `Since you have ${symptoms.join(', ')}, you probably have ${condition}.`;
-    return `Since you have *some symptoms*, you should go to *doctor*.`;
-  };
+import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
-
-const SummaryContent = ({ summary }) => {
-    return (
-      <Paper variant="elevation">{'Since you have *some symptoms*, you should to to *doctor*.'}</Paper>
-      // <Box sx={{ padding: '1em' }}>
-      //   <Typography variant="body1">{summary}</Typography>
-      // </Box>
-    );
+const Summary = () => {
+    const location = useLocation();
+    const data = location.state;
+    console.log(data)
+    //useEffect(() => {
+      //console.log(data);
+      //}, [data]);
+      return (
+        <Paper variant="elevation">
+          <div>
+            {data.received.map((item, index) => (
+              <div key={index}>
+                <p>Symptom Medical Name: {item.symptom_medical_name}</p>
+                <p>Symptom Progression: {item.symptom_progression}</p>
+                {/* Render other properties as needed */}
+              </div>
+            ))}
+            {data.predicted.map((item, index) => (
+              <div key={index}>
+                <p>Disease: {item.disease}</p>
+                <p>Probability: {item.probability}</p>
+                {/* Render other properties as needed */}
+              </div>
+            ))}
+          </div>
+        </Paper>
+      );
   };
 
 const SummaryPage = () => {
@@ -32,7 +48,7 @@ const SummaryPage = () => {
         <ThemeProvider theme={Theme}>
           <Header />
           <AssessmentDivider text="Summary" />
-          <SummaryContent summary={constructSummary()} />
+          <Summary />
           <PrintAssessment />
         </ThemeProvider>
       </React.StrictMode>

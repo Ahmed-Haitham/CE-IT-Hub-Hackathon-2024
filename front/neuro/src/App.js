@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import Theme from "./components/utils/Theme"
 
@@ -9,9 +10,12 @@ import Steps from './components/utils/Footer';
 import Assessment from './components/user_inputs/ActorAssessment';
 import SymptomSelection from './components/user_inputs/SymptomSelect';
 import FinalQuestions from './components/user_inputs/FinalQuestions';
-import SendAssessment from './components/user_inputs/EndAssessment';
+import SendAssessment from './components/user_inputs/SendAssessment';
 
 function App() {
+    //prediction state init
+    const [prediction, setPrediction] = React.useState(null);
+
     //state for actor selection
     const [assessment_actor, setAssessmentActor] = React.useState({
       selectedActor: 'patient',
@@ -72,7 +76,7 @@ function App() {
     };
   
     //function for submitting the assessment
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
       const requestData = {
         selectedActor: assessment_actor.selectedActor,
         selectedSymptoms: selected_dropdown_symptoms ? selected_dropdown_symptoms.map(symptom => symptom.symptom_medical_name) : [],
@@ -83,21 +87,28 @@ function App() {
         selectedAgeOnset: selected_age_onset.selectedAgeOnset,
         female_gender: female_gender
       };
-  
-      fetch(`${process.env.REACT_APP_API_URL}/evaluateAssessment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestData),
-      })
-        .then(response => {
-          console.log(response);
-        })
-        .catch(error => {
-          console.log(error);
+    
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/evaluateAssessment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestData),
         });
+    
+        const responseData = await response.json();
+        setPrediction(responseData);
+        console.log(responseData);
+        return responseData;
+      } catch (error) {
+        console.error('Error:', error);
+      }
     };
+
+    useEffect(() => {
+      console.log(prediction);
+    }, [prediction]);
   
     return (
       <React.StrictMode>
@@ -133,7 +144,10 @@ function App() {
             setSelectedGender={setSelectedGender}
           />
           <AssessmentDivider text="Are you ready to submit?" />
-          <SendAssessment onSubmit={handleSubmit} />
+          <SendAssessment 
+            onSubmit={handleSubmit} 
+            prediction={prediction}
+          />
           <Steps />
         </ThemeProvider>
       </React.StrictMode>
