@@ -166,19 +166,22 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                     sx={{ display: 'flex', flexDirection: 'column' }} // Adjusting styles for dropdown appearance
                   >
                     Fast Progression ▼ {/* Adding arrow icon indicating dropdown */}
-                    <ToggleButtonGroup
-                      value={selected_progression[index] === 'fastProgressing' ? 'fastProgressing' : undefined} // Showing dropdown options only when this button is selected
-                      onChange={handleProgressionToggle(index, 'fastProgressing')}
-                      exclusive
-                      orientation="vertical"
-                      aria-label="fastProgressing dropdown"
-                      size="small" // Adjusting size to match other buttons
-                      sx={{ position: 'absolute', zIndex: 1, top: '100%' }} // Positioning the dropdown
-                    >
-                      <ToggleButton value="optionA">Option A</ToggleButton>
-                      <ToggleButton value="optionB">Option B</ToggleButton>
-                    </ToggleButtonGroup>
+                    {selected_progression[index] === 'fastProgressing' && (
+                      <ToggleButtonGroup
+                        value={selected_progression[index]}
+                        onChange={handleProgressionToggle(index, 'fastProgressing')}
+                        exclusive
+                        orientation="vertical"
+                        aria-label="fastProgressing dropdown"
+                        size="small" // Adjusting size to match other buttons
+                        sx={{ position: 'absolute', zIndex: 1, top: '100%' }} // Positioning the dropdown
+                      >
+                        <ToggleButton value="optionA">Option A</ToggleButton>
+                        <ToggleButton value="optionB">Option B</ToggleButton>
+                      </ToggleButtonGroup>
+                    )}
                   </ToggleButton>
+
                 </ToggleButtonGroup>
               </Grid>
               {/*3rd item: box with symmetricity choices group*/}
