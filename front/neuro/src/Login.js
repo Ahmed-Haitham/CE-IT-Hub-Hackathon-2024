@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Header from "./components/utils/Header";
 import { ThemeProvider } from '@mui/material/styles';
 import Theme from "./components/utils/Theme"
-import { UserContext } from "./context/UserContext";
-import ErrorMessage from "./components/admin_panel/ErrorMessage";
+import { UserContext } from "./components/utils/UserContext";
+import ErrorMessage from "./components/utils/ErrorMessage";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -109,5 +109,6 @@ const Login = () => {
         </React.StrictMode>
     );
     };
+
 
 export default Login;
