@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Box, List, IconButton, ListItem, ListItemText, ToggleButton, ToggleButtonGroup, MenuItem, Select } from '@mui/material';
+import { Grid, Box, List, IconButton, ListItem, ListItemText, ToggleButton, ToggleButtonGroup, MenuItem, Select, FormControl } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -153,6 +153,8 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                   >
                     Variable
                   </ToggleButton>
+                  <FormControl>
+                  <InputLabel>PROGRESSION</InputLabel>
                   <Select
                     value={selected_progression[index]}
                     onChange={handleProgressionToggle(index)}
@@ -162,6 +164,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                     <MenuItem value={'slow_progressing'}>Slow Progressing</MenuItem>
                     <MenuItem value={'fast_progressing'}>Fast Progressing</MenuItem>
                   </Select>
+                  </FormControl>
                 </ToggleButtonGroup>
               </Grid>
               {/*3rd item: box with symmetricity choices group*/}
