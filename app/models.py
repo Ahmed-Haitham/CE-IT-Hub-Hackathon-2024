@@ -113,15 +113,17 @@ class SymptomDefinitions(Base):
     __tablename__ = "symptoms_definition"
 
     id = Column(Integer, default=None, primary_key=True)
-    symptom_name = Column(String(999), nullable=False, unique=True)
+    symptom_medical_name = Column(String(999), nullable=False, unique=True)
+    symptom_description = Column(String(999))
     symptom_media_path = Column(String(128))
+    symptom_tags = Column(ARRAY(String))
 
 
 class DiseaseGroupDefinitions(Base):
     __tablename__ = "disease_groups_definition"
 
     id = Column(Integer, default=None, primary_key=True)
-    disease_group_name = Column(String(999), nullable=False, unique=True)
+    disease_group_medical_name = Column(String(999), nullable=False, unique=True)
 
 
 class SymptomsValidation(Base):
@@ -136,4 +138,5 @@ class Symptoms(Base):
     id = Column(Integer, default=None, primary_key=True)
     symptom_name = Column(String(999), ForeignKey("symptoms_validation.pseudo_symptom_name"), nullable=False)
     symptom_category = Column(String(128))
-    disease_name= Column(String(128))
+    disease_name = Column(String(128))
+    disease_code = Column(String(12))

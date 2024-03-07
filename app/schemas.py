@@ -31,14 +31,16 @@ class SymptomDefinitions(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    symptom_name: str 
+    symptom_medical_name: str
+    symptom_description: str | None
+    symptom_tags: list[str] | None
 
 
 class DiseaseGroupDefinitions(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    disease_group_name: str
+    disease_group_medical_name: str
 
 
 class SymptomsValidation(BaseModel):
@@ -55,6 +57,7 @@ class Symptoms(BaseModel):
     symptom_name: str
     symptom_category: str
     disease_name: str
+    disease_code: str
 
 
 class BaseBigTable(BaseModel):
