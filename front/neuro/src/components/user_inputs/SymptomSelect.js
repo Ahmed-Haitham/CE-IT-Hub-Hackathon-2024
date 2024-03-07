@@ -166,7 +166,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                     sx={{ display: 'flex', flexDirection: 'column' }} // Adjusting styles for dropdown appearance
                   >
                     Fast Progression ▼ {/* Adding arrow icon indicating dropdown */}
-                  </ToggleButton>
+                  
                   {selected_progression[index] === 'fastProgressing' && (
                     <ToggleButtonGroup
                       value={selected_progression[index]}
@@ -181,7 +181,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                       <ToggleButton value="optionB">Option B</ToggleButton>
                     </ToggleButtonGroup>
                   )}
-
+                  </ToggleButton>
 
                 </ToggleButtonGroup>
               </Grid>
