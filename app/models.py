@@ -139,4 +139,8 @@ class Symptoms(Base):
     symptom_name = Column(String(999), ForeignKey("symptoms_validation.pseudo_symptom_name"), nullable=False)
     symptom_category = Column(String(128))
     disease_name = Column(String(128))
+<<<<<<< HEAD
     disease_code = Column(String(12))
+=======
+    disease_code = Column(String(12))
+>>>>>>> ebfd5e4 (WIP)
