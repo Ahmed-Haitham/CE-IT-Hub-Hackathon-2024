@@ -1,11 +1,11 @@
 // TODO: API call
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { ThemeProvider, styled } from '@mui/material/styles';
 import * as React from 'react';
-import Header from "../Header";
+import Header from "../utils/Header";
 import Theme from "../utils/Theme";
-import Box from '@mui/material/Box';
 import Logout from './Logout';
 
 

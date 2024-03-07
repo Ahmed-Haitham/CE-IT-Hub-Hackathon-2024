@@ -4,14 +4,11 @@ import Theme from "./components/utils/Theme"
 
 import Header from './components/utils/Header';
 import AssessmentDivider from './components/utils/AssessmentDivider';
-import Steps from './components/utils/Footer';
 
-import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import PrintAssessment from './components/summary_page/PrintAssessment';
 
 import { useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
 
 const Summary = () => {
     const location = useLocation();

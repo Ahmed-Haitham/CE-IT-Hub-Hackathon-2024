@@ -1,6 +1,6 @@
 // TODO: Logout in proper place
 import React, { useContext } from "react";
-import { AppBar, Box, Toolbar, Button } from '@mui/material';
+import { Button } from '@mui/material';
 import { UserContext } from "../../context/UserContext";
 
 const Logout = ({ title }) => {

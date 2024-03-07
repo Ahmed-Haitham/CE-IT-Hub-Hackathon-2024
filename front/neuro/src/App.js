@@ -1,5 +1,4 @@
 import React from 'react';
-import { useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import Theme from "./components/utils/Theme"
 

@@ -4,6 +4,8 @@ import './index.css';
 import App from './App';
 import SummaryPage from './Summary';
 import Login from './Login';
+import Upload from './components/admin_panel/Upload'
+import { UserProvider } from './context/UserContext'
 
 import {
   createBrowserRouter,
