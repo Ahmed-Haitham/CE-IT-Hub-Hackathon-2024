@@ -1,11 +1,10 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import Header from "../Header";
-
+import Header from "./components/utils/Header";
 import { ThemeProvider } from '@mui/material/styles';
-import Theme from "../Theme";
-import { UserContext } from "../context/UserContext";
-import ErrorMessage from "./ErrorMessage";
+import Theme from "./components/utils/Theme"
+import { UserContext } from "./context/UserContext";
+import ErrorMessage from "./components/admin_panel/ErrorMessage";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -19,7 +18,7 @@ const Login = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [errorMessage, seterrorMessage] = useState("");
-    const [token, setToken] = useContext(UserContext);
+    const [, setToken] = useContext(UserContext);
     const navigate = useNavigate();
 
   const submitLogin = async () => {

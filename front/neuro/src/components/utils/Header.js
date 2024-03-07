@@ -1,6 +1,6 @@
 import React from 'react';
-import wum_logo from './assets/Logo_WUM.png';
-import pg_logo from './assets/PGlogo.png';
+import wum_logo from '../../assets/Logo_WUM.png';
+import pg_logo from '../../assets/PGlogo.png';
 import { AppBar, Box, Toolbar, Button } from '@mui/material';
 import { Link } from 'react-router-dom'; 
 
