@@ -154,8 +154,9 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                     Variable
                   </ToggleButton>
                   <FormControl>
-                  <InputLabel>PROGRESSION</InputLabel>
+                  <InputLabel id="progression-input">PROGRESSION</InputLabel>
                   <Select
+                    labelId="progression-input"
                     value={selected_progression[index]}
                     onChange={handleProgressionToggle(index)}
                     inputProps={{ 'aria-label': 'progression choice'}}
