@@ -26,6 +26,9 @@ const Summary = () => {
 
     return (
       <Box sx={{ padding: '0 2em', mb: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'center', mb: 2 }}>
+            Predicted Diseases
+          </Typography>
           {sortedPredictions.map((item, index) => (
             <Accordion key={index}>
               <AccordionSummary
