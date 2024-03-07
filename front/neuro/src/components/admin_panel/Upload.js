@@ -6,7 +6,6 @@ import { ThemeProvider, styled } from '@mui/material/styles';
 import * as React from 'react';
 import Header from "../utils/Header";
 import Theme from "../utils/Theme";
-import Logout from './Logout';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -38,7 +37,6 @@ export default function Upload() {
         <VisuallyHiddenInput type="file" />
       </Button>
       </Box>
-      <Logout />
     </ThemeProvider>
   </React.StrictMode>
     

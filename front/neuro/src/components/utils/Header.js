@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import wum_logo from '../../assets/Logo_WUM.png';
 import pg_logo from '../../assets/PGlogo.png';
 import { AppBar, Box, Toolbar, Button } from '@mui/material';
-import { Link } from 'react-router-dom'; 
+import { Link } from 'react-router-dom';
+import { UserContext } from './UserContext';
+import Logout from './Logout'
+import LoginButton from './LoginButton'
 
 const Header = () => {
+  const [token, ] = useContext(UserContext);
+
   return (
     <AppBar position="static" color="primary">
       <Toolbar>
@@ -22,7 +27,12 @@ const Header = () => {
         <Box marginRight={4}>
         <Button variant="text" color="inherit">Learn More</Button>
         </Box>
-        <Button variant="contained" color="ochre" as={Link} to="/login" style={{ textDecoration: 'none' }}>ADMIN LOG IN</Button>
+        {token ?
+          <Logout/>
+          :
+          <LoginButton/>
+        }
+        
       </Toolbar>
     </AppBar>
   );
