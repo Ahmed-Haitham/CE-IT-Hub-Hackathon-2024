@@ -156,10 +156,9 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                   <Select
                     value={selected_progression[index]}
                     onChange={handleProgressionToggle(index)}
-                    displayEmpty
-                    inputProps={{ 'aria-label': 'progression choice' }}
+                    inputProps={{ 'aria-label': 'progression choice'}}
+                    renderValue={(value) => (value ? value : "Progression")}
                   >
-                    Progressing
                     <MenuItem value={'slow_progressing'}>Slow Progressing</MenuItem>
                     <MenuItem value={'fast_progressing'}>Fast Progressing</MenuItem>
                   </Select>
