@@ -159,6 +159,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                     displayEmpty
                     inputProps={{ 'aria-label': 'progression choice' }}
                   >
+                    Progressing
                     <MenuItem value={'slow_progressing'}>Slow Progressing</MenuItem>
                     <MenuItem value={'fast_progressing'}>Fast Progressing</MenuItem>
                   </Select>
