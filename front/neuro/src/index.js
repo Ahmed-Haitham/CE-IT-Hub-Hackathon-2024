@@ -22,7 +22,11 @@ const router = createBrowserRouter([
   },
   {
     path: "login",
-    element: <Login />
+    element: <UserProvider><Login /></UserProvider>,
+  },
+  {
+    path: "upload",
+    element: <UserProvider><Upload /></UserProvider>,
   }
 ]);
 
