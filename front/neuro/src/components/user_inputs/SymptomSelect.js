@@ -154,7 +154,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                   >
                     Variable
                   </ToggleButton>
-                  <FormControl sx={{ m: 1, minWidth: 120 }}>
+                  <FormControl sx={{ marginRight: '1em', flexWrap: 'wrap' }}>
                   <InputLabel id="progression-input">PROGRESSION</InputLabel>
                   <Select
                     labelId="progression-input"
