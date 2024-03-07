@@ -1,17 +1,15 @@
 // import * as React from 'react';
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import LoadingButton from '@mui/lab/LoadingButton';
+import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 
-const SendAssessment = () => {
-    const [loading, setLoading] = React.useState(false);
+const PrintAssessment = () => {
     const [showAlert, setShowAlert] = React.useState(false);
     const [open, setOpen] = React.useState(true);
     function handleClick() {
-        setLoading(true);
         setShowAlert(true);
     }
 
@@ -19,15 +17,13 @@ const SendAssessment = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '10vh' }}>
             <Box sx={{ flex: '1 0 auto', padding: '0 2em', display: 'flex', justifyContent: 'center' }}>
                 <Link to="/summary" style={{ textDecoration: 'none' }}>
-                    <LoadingButton
+                    <Button
                         onClick={handleClick}
                         endIcon={<SendIcon />}
-                        loading={loading}
-                        loadingPosition="end"
                         variant="contained"
                     >
                         <span>Save/Print</span>
-                    </LoadingButton>
+                    </Button>
                 </Link>
             </Box>
             <Box sx={{ padding: '0 2em', marginTop: 'auto' }}>
@@ -40,4 +36,4 @@ const SendAssessment = () => {
         </Box>
     )
 }
-export default SendAssessment;
+export default PrintAssessment;

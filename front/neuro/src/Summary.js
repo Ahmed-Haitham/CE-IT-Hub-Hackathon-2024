@@ -8,7 +8,7 @@ import Steps from './components/utils/Footer';
 
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
-import SaveAssessment from './components/user_inputs/EndAssessment';
+import PrintAssessment from './components/summary_page/PrintAssessment';
 
 const constructSummary = () => {
     // Customize the template based on your requirements
@@ -33,7 +33,7 @@ const SummaryPage = () => {
           <Header />
           <AssessmentDivider text="Summary" />
           <SummaryContent summary={constructSummary()} />
-          <SaveAssessment />
+          <PrintAssessment />
         </ThemeProvider>
       </React.StrictMode>
     );
