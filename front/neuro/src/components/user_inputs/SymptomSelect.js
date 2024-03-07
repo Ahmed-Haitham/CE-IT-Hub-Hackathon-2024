@@ -139,7 +139,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                   onChange={handleProgressionToggle}
                   orientation={isSmallScreen ? 'vertical' : 'horizontal'}
                   aria-label="progression choice"
-                  sx={{ marginRight: '1em', flexWrap: 'wrap' }}>
+                  sx={{ display: 'flex', alignItems: 'center', marginRight: '1em', flexWrap: 'wrap' }}>
                   <ToggleButton
                     value="stable"
                     onChange={handleProgressionToggle(index, 'stable')}
