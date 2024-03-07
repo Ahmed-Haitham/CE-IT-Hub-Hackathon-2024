@@ -1,10 +1,10 @@
 import React, { useState, useContext } from "react";
-import Header from "../Header";
+import Header from "./components/utils/Header";
 
-import ErrorMessage from "./ErrorMessage";
-import { UserContext } from "../context/UserContext";
+import ErrorMessage from "./components/admin_panel/ErrorMessage";
+import { UserContext } from "./context/UserContext";
 import { ThemeProvider } from '@mui/material/styles';
-import Theme from "../Theme"
+import Theme from "./components/utils/Theme"
 
 const Login = () => {
     const [username, setUsername] = useState("");
