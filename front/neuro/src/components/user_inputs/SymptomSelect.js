@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Box, List, IconButton, ListItem, ListItemText, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Grid, Box, List, IconButton, ListItem, ListItemText, ToggleButton, ToggleButtonGroup, MenuItem, Select } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -153,36 +153,15 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                   >
                     Variable
                   </ToggleButton>
-                  <ToggleButton
-                    value="slowProgressing"
-                    onChange={handleProgressionToggle(index, 'slowProgressing')}
-                    aria-label="slowProgressing"
+                  <Select
+                    value={selected_progression[index]}
+                    onChange={handleProgressionToggle(index)}
+                    displayEmpty
+                    inputProps={{ 'aria-label': 'progression choice' }}
                   >
-                    Slow Progressing
-                  </ToggleButton>
-                  <ToggleButton
-                    value="fastProgressing"
-                    aria-label="fastProgressing"
-                    sx={{ display: 'flex', flexDirection: 'column' }} // Adjusting styles for dropdown appearance
-                  >
-                    Fast Progression ▼ {/* Adding arrow icon indicating dropdown */}
-                  
-                  {selected_progression[index] === 'fastProgressing' && (
-                    <ToggleButtonGroup
-                      value={selected_progression[index]}
-                      onChange={handleProgressionToggle(index, 'fastProgressing')}
-                      exclusive
-                      orientation="vertical"
-                      aria-label="fastProgressing dropdown"
-                      size="small" // Adjusting size to match other buttons
-                      sx={{ position: 'absolute', zIndex: 1, top: '100%' }} // Positioning the dropdown
-                    >
-                      <ToggleButton value="optionA">Option A</ToggleButton>
-                      <ToggleButton value="optionB">Option B</ToggleButton>
-                    </ToggleButtonGroup>
-                  )}
-                  </ToggleButton>
-
+                    <MenuItem value={'slow_progressing'}>Slow Progressing</MenuItem>
+                    <MenuItem value={'fast_progressing'}>Fast Progressing</MenuItem>
+                  </Select>
                 </ToggleButtonGroup>
               </Grid>
               {/*3rd item: box with symmetricity choices group*/}
