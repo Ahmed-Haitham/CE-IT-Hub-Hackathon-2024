@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { ThemeProvider, styled } from '@mui/material/styles';
 import * as React from 'react';
 import Header from "../Header";
-import Theme from "../Theme";
+import Theme from "../utils/Theme";
 import Box from '@mui/material/Box';
 import Logout from './Logout';
 
