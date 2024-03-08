@@ -27,10 +27,10 @@ const Header = () => {
         <Box marginRight={4}>
         <Button variant="text" color="inherit">Learn More</Button>
         </Box>
-        {token ?
-          <Logout/>
-          :
+        {!token ?
           <LoginButton/>
+          :
+          <Logout/>
         }
         
       </Toolbar>
