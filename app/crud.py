@@ -227,6 +227,22 @@ class PredictionClient():
         onset_dict = {key: member.value for key, member in OnsetChoices.__members__.items()}
         ck_level_dict = {key: member.value for key, member in CkLevelChoices.__members__.items()}
         user_input = user_input.dict()
+        
+        translated_input = myinput.copy()
+        # Translate selectedSymmetricity
+        translated_input["selectedSymmetricity"] = [symmetricity_dict.get(value, value) for value in translated_input["selectedSymmetricity"]]
+        # Translate selectedProgression
+        translated_input["selectedProgression"] = [progression_dict.get(value, value) for value in translated_input["selectedProgression"]]
+        # Translate selectedAgeOnset
+        translated_input["selectedAgeOnset"] = onset_dict.get(translated_input["selectedAgeOnset"], translated_input["selectedAgeOnset"])
+        # Translate selectedCk
+        translated_input["selectedCk"] = ck_level_dict.get(translated_input["selectedCk"], translated_input["selectedCk"])
+        # Translate selectedGender
+        if translated_input.get("female_gender"):
+            translated_input["female_gender"] = [GenderChoices.female.value if value else GenderChoices.male.value for value in translated_input["female_gender"]]
+        # Translate selectedSymptoms
+        translated_input["selectedSymptoms"] = [symptom for symptom in translated_input["selectedSymptoms"]]
+
         translation_dict = {'selectedActor': 'wybranyAktor',
                 'selectedSymptoms': 'nazwa objawu',
                 'selectedProgression': 'nasilenie w czasie',
@@ -251,7 +267,7 @@ class PredictionClient():
                         'podgrupa chorób',
                         'cechy charakterystyczne i objawy współistniejące',
                         'jednostka chorobowa']
-        desired_input = {translation_dict.get(k, k): v for k, v in user_input.items()}
+        desired_input = {translation_dict.get(k, k): v for k, v in translated_input.items()}
         for key in desired_input:
             if isinstance(desired_input[key], list):
                 desired_input[key] = [desired_input[key][0]]
