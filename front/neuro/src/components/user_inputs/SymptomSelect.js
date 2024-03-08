@@ -81,6 +81,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                       component="iframe" 
                       src={srcPath}
                       alt="tooltip_media"
+                      sx={{objectFit: "contain" }}
                     />
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="div">
