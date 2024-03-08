@@ -140,32 +140,41 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                     onChange={handleProgressionToggle}
                     orientation={isSmallScreen ? 'vertical' : 'horizontal'}
                     aria-label="progression choice"
-                    sx={{ marginRight: '1em', flexWrap: 'wrap' }}>
+                    sx={{ marginRight: '1em', flexWrap: 'wrap' }}
+                    >
                     <ToggleButton
                       value="stable"
                       onChange={handleProgressionToggle(index, 'stable')}
                       aria-label="stable"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
                     >
                       Stable
                     </ToggleButton>
                     <ToggleButton
                       value="variable"
                       onChange={handleProgressionToggle(index, 'variable')}
-                      aria-label="variable">
+                      aria-label="variable"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                      >
                       Variable
                     </ToggleButton>
                     <ToggleButton
                       value="slow Progressing"
                       onChange={handleProgressionToggle(index, 'slow Progressing')}
-                      aria-label="slow Progressing">
-                      Slow Progressing
+                      aria-label="slow"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                      >
+                      Slow
                     </ToggleButton>
                     <ToggleButton
-                      value="fast Progressing"
+                      value="fast"
                       onChange={handleProgressionToggle(index, 'fast Progressing')}
-                      aria-label="fast Progresssing">
-                      Fast Progressing
+                      aria-label="fast Progresssing"style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                      >
+                      Fast
                     </ToggleButton>
+                    </ToggleButtonGroup>
+                  </Grid>
                     
                     {/* <FormControl fullWidth sx={{ flexBasis: '50%' }}>
                     <InputLabel id="progression-input">PROGRESSING</InputLabel>
@@ -179,8 +188,6 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                       <MenuItem value={'fast_progressing'}>Fast Progressing</MenuItem>
                     </Select>
                   </FormControl> */}
-                  </ToggleButtonGroup>
-                </Grid>
                 {/*3rd item: box with symmetricity choices group*/}
                 <Grid item xs={isSmallScreen ? 6 : 3} flexDirection="row" alignItems="center">
                   <ToggleButtonGroup
@@ -193,6 +200,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                       value="na"
                       onChange={handleSymmetricityToggle(index, 'na')}
                       aria-label="na"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
                     >
                       NA
                     </ToggleButton>
@@ -200,6 +208,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                       value="unilateral"
                       onChange={handleSymmetricityToggle(index, 'unilateral')}
                       aria-label="unilateral"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
                     >
                       1 Side
                     </ToggleButton>
@@ -207,6 +216,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                       value="bilateral"
                       onChange={handleSymmetricityToggle(index, 'bilateral')}
                       aria-label="bilateral"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
                     >
                       2 Sides
                     </ToggleButton>
@@ -214,25 +224,27 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                 </Grid>
                 {/*4th item: switch for faimily history*/}
                 <Grid item xs={isSmallScreen ? 6 : 3} flexDirection="row" alignItems="center">
-                  {/* <Switch
+
+                  <Switch
                     checked={selected_family_history[index]}
                     onChange={() => familyHistoryToggle(index)}
                     name={`selected_family_history_${index}`}
-                /> */}
-                  <FormControl fullWidth sx={{ flexBasis: '50%' }}>
+                />
+                {selected_family_history[index] && (
+                  <FormControl fullWidth sx={{ flexBasis: '30%' }}>
                     <InputLabel id="family-input">Select Generation</InputLabel>
                     <Select
-                      // labelId="progression-input"
-                      // value={selected_progression[index]}
+                      // labelId="family-history-input"
+                      // value={selected_famility_history[index]}
                       // onChange={handleProgressionToggle(index)}
-                      // inputProps={{ 'aria-label': 'progression choice'}}
+                      // inputProps={{ 'aria-label': 'family history choice'}}
                       label="Family History">
-                      <MenuItem value={'no_family'}>None</MenuItem>
                       <MenuItem value={'first_generation'}>First Generation</MenuItem>
                       <MenuItem value={'second_generation'}>Second Generation</MenuItem>
                       <MenuItem value={'above_second_generation'}>Above Second Generation</MenuItem>
                     </Select>
                   </FormControl>
+                )}
                 </Grid>
               </Grid>
             </ListItem>
