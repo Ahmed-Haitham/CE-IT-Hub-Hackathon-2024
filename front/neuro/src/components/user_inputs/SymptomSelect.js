@@ -168,17 +168,26 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
                       Variable
                     </ToggleButton>
                     <ToggleButton
-                      value="slow Progressing"
-                      onChange={handleProgressionToggle(index, 'slow Progressing')}
+                      value="slow"
+                      onChange={handleProgressionToggle(index, 'slow')}
                       aria-label="slow"
                       style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
                       >
                       Slow
                     </ToggleButton>
                     <ToggleButton
+                      value="medium"
+                      onChange={handleProgressionToggle(index, 'medium')}
+                      aria-label="medium"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                      >
+                      Medium
+                    </ToggleButton>
+                    <ToggleButton
                       value="fast"
-                      onChange={handleProgressionToggle(index, 'fast Progressing')}
-                      aria-label="fast Progresssing"style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
+                      onChange={handleProgressionToggle(index, 'fast')}
+                      aria-label="fast"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.8rem' }}
                       >
                       Fast
                     </ToggleButton>

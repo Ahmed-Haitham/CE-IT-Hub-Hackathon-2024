@@ -249,30 +249,18 @@ class PredictionClient():
             {
                 "disease": "Parkinson's Disease",
                 "probability": 0.8,
-                "symptoms": ["jittering", "trouble speaking"],
-                "mandatory_symptoms": ["jittering"],
-                "excluding_symptoms": ["ptosis"]
             },
             {
                 "disease": "Multiple Sclerosis",
                 "probability": 0.1,
-                "symptoms": ["numbness", "trouble walking"],
-                "mandatory_symptoms": ["numbness"],
-                "excluding_symptoms": []
             },
             {
                 "disease": "Alzheimer's Disease",
                 "probability": 0.05,
-                "symptoms": ["memory loss", "trouble concentrating"],
-                "mandatory_symptoms": [],
-                "excluding_symptoms": []
             },
             {
                 "disease": "Huntington's Disease",
                 "probability": 0.05,
-                "symptoms": ["involuntary movements", "trouble walking"],
-                "mandatory_symptoms": [],
-                "excluding_symptoms": ["ck_over_1000"]
             }
         ]
         return [user_inputs_df.to_dict(orient='records'), predicted]
