@@ -9,7 +9,6 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
-    Table,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 
@@ -107,3 +106,36 @@ class OneBigTable(Base):
     test_ck_level = Column(Enum(CkLevelChoices), default="not_tested")
 
     gender = Column(Enum(GenderChoices), nullable=False)
+
+
+class SymptomDefinitions(Base):
+    __tablename__ = "symptoms_definition"
+
+    id = Column(Integer, default=None, primary_key=True)
+    symptom_medical_name = Column(String(999), nullable=False, unique=True)
+    symptom_description = Column(String(999))
+    symptom_media_path = Column(String(128))
+    symptom_tags = Column(ARRAY(String))
+
+
+class DiseaseGroupDefinitions(Base):
+    __tablename__ = "disease_groups_definition"
+
+    id = Column(Integer, default=None, primary_key=True)
+    disease_group_medical_name = Column(String(999), nullable=False, unique=True)
+
+
+class SymptomsValidation(Base):
+    __tablename__ = "symptoms_validation"
+
+    id = Column(Integer, default=None, primary_key=True)
+    pseudo_symptom_name = Column(String(3000), nullable=False, unique=True)
+
+class Symptoms(Base):
+    __tablename__ = "symptoms"
+
+    id = Column(Integer, default=None, primary_key=True)
+    symptom_name = Column(String(3000)) #TODO set back foreign key constraint, ForeignKey("symptoms_validation.pseudo_symptom_name"), nullable=False)
+    symptom_category = Column(String(128))
+    disease_name = Column(String(128))
+    disease_code = Column(String(128))

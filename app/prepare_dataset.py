@@ -163,7 +163,7 @@ def convert_excel_to_long_format(excel_file_path, remove_sheets, remove_columns)
     return all_diseases_long
 
 
-def convert_long_to_dictionary(long_df):
+def convert_long_to_dictionary(long_dict):
     """
     Converts a long-format DataFrame into a nested dictionary.
 
@@ -174,13 +174,14 @@ def convert_long_to_dictionary(long_df):
     - dict_all (dict): Nested dictionary where keys are disease codes and values are dictionaries
                      containing symptom categories as keys and lists of symptoms as values.
     """
+    long_df = pd.DataFrame(long_dict)
     dict_all = {}
     grouped_df = long_df.groupby('disease_code')
     for disease_code, group_df in grouped_df:
         disease_symptoms = {}
         for _, row in group_df.iterrows():
             category = row['symptom_category']
-            symptom = row['symptom']
+            symptom = row['symptom_name']
             if category not in disease_symptoms:
                 disease_symptoms[category] = []
             disease_symptoms[category].append(symptom)

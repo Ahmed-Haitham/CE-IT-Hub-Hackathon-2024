@@ -27,28 +27,37 @@ class TokenCreate(BaseModel):
     created_date: datetime.datetime
 
 
-class SymptomBigTable(BaseModel):
+class SymptomDefinitions(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     symptom_medical_name: str
     symptom_description: str | None
-    # symptom_is_red_flag: bool
-    # TODO: Enum validation should actually happen via pydantic models
-    symptom_symmetricity: str
-    symptom_progression: str
-    first_symptom_age_onset_group: str
     symptom_media_path: str | None
-    # TODO: can tags be null?
     symptom_tags: list[str] | None
-    
 
 
-class DiseaseGroupBigTable(BaseModel):
+class DiseaseGroupDefinitions(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
+    id: int
     disease_group_medical_name: str
-    disease_group_summary_message: str
-    test_ck_level: str
+
+
+class SymptomsValidation(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    pseudo_symptom_name: str
+
+
+class Symptoms(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    symptom_name: str
+    symptom_category: str
+    disease_name: str
+    disease_code: str
 
 
 class BaseBigTable(BaseModel):

@@ -19,7 +19,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
   const isSmallScreen = useMediaQuery(theme => theme.breakpoints.down('sm'));
 
   async function getList() {
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/symptoms?distinct_only=true`);
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/symptoms`);
     const data = await response.json();
     return data;
   }
@@ -71,32 +71,33 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
           return filtered;
         }}
         renderOption={(props, option, { selected }) => {
-          let srcPath = option.symptom_media_path.startsWith('http') ? option.symptom_media_path : `/media/${option.symptom_media_path}`;
-          return (
+          if (option.symptom_media_path!=null){
+            let srcPath = option.symptom_media_path.startsWith('http') ? option.symptom_media_path : `/media/${option.symptom_media_path}`;
+            return (
             <Box {...props}>
               <Tooltip sx={{ maxWidth: 0.25 }} title={
-                <Card>
-                  <CardMedia
-                    component="iframe"
-                    src={srcPath}
-                    alt="tooltip_media"
-                  />
-                  <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {option.symptom_medical_name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {option.symptom_description}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              }
+                  <Card>
+                    <CardMedia
+                      component="iframe" 
+                      src={srcPath}
+                      alt="tooltip_media"
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {option.symptom_medical_name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {option.symptom_description}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                }
                 placement="right"
                 arrow
                 componentsProps={{
-                  tooltip: { sx: { bgcolor: 'transparent', boxShadow: 'none', } },
+                  tooltip: { sx: { bgcolor: 'transparent' , boxShadow: 'none',} },
                 }}
-              >
+                >
                 <Button>
                   <InfoIcon />
                 </Button>
@@ -104,7 +105,15 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
               {option.symptom_medical_name}
             </Box>
           )
-        }}
+          }
+          else{
+            return (
+              <Box {...props}>
+                {option.symptom_medical_name}
+              </Box>
+            )
+          }
+          }}
         renderInput={(params) => (
           <TextField {...params} label="Symptoms" placeholder="Type a symptom" />
         )}

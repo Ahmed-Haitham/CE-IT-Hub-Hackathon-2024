@@ -15,11 +15,14 @@ from app.auth import (
 from app.crud import (
     AuthClient,
     BigTableClient,
-    DiseaseGroupClient,
     PredictionClient,
-    SymptomClient,
+    SymptomDefinitionsClient,
+    DiseaseGroupDefinitionsClient,
+    SymptomsClient
 )
 from app.db import AsyncSessionFactory, engine, get_session, start_db
+
+from .utils.data_loader import read_xlsx_and_load_to_tables
 
 app = FastAPI(title="WUM Neurological disease tool backend")
 
@@ -53,24 +56,24 @@ async def startup_event():
 async def root():
     return {"message": "See /docs or /redoc for the API documentation"}
 
-@app.get("/symptoms", response_model=list[schemas.SymptomBigTable])
-async def list_symptoms(distinct_only: bool = True, search_for: str | None = None, db: AsyncSession = Depends(get_session)):
-    client = SymptomClient(db)
-    return await client.list_symptoms(distinct_only, search_for)
+@app.get("/symptoms", response_model=list[schemas.SymptomDefinitions])
+async def list_symptoms(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+    client = SymptomDefinitionsClient(db)
+    return await client.list_symptoms(search_for)
 
-@app.get("/symptoms/{symptom}", response_model=schemas.SymptomBigTable)
+@app.get("/symptoms/{symptom}", response_model=schemas.SymptomDefinitions)
 async def get_symptom(symptom_name: str, db: AsyncSession = Depends(get_session)):
-    client = SymptomClient(db)
+    client = SymptomDefinitionsClient(db)
     return await client.get_symptom(symptom_name)
 
-@app.get("/diseaseGroups", response_model=list[schemas.DiseaseGroupBigTable])
-async def list_disease_groups(distinct_only: bool = True, search_for: str | None = None, db: AsyncSession = Depends(get_session)):
-    client = DiseaseGroupClient(db)
-    return await client.list_disease_groups(distinct_only, search_for)
+@app.get("/diseaseGroups", response_model=list[schemas.DiseaseGroupDefinitions])
+async def list_disease_groups(search_for: str | None = None, db: AsyncSession = Depends(get_session)):
+    client = DiseaseGroupDefinitionsClient(db)
+    return await client.list_disease_groups(search_for)
 
-@app.get("/diseaseGroups/{disease_group}", response_model=schemas.DiseaseGroupBigTable)
+@app.get("/diseaseGroups/{disease_group}", response_model=schemas.DiseaseGroupDefinitions)
 async def get_disease_group(disease_group: str, db: AsyncSession = Depends(get_session)):
-    client = DiseaseGroupClient(db)
+    client = DiseaseGroupDefinitionsClient(db)
     return await client.get_disease_group(disease_group)
 
 @app.get('/bigTable', response_model=list[schemas.FullBigTable])
@@ -87,6 +90,11 @@ async def get_table_entry(table_entry_id: int, db: AsyncSession = Depends(get_se
 async def post_table_entry(table_entry: schemas.BaseBigTable, dependencies=Depends(JWTBearer()), db: AsyncSession = Depends(get_session)):
     client = BigTableClient(db)
     return await client.add_entry(table_entry)
+
+@app.get('/algorithmInput', response_model=None)
+async def algorithm_input(db: AsyncSession = Depends(get_session)):
+    client = SymptomsClient(db)
+    return await client.create_algorithm_input()
 
 @app.post('/evaluateAssessment', response_model=None)
 async def evaluate_assessment(assessment: schemas.EvaluateAssessment, db: AsyncSession = Depends(get_session)):
@@ -106,6 +114,7 @@ async def create_upload_file(
     contents = await file.read()
     print("tutej", contents)
     buffer = BytesIO(contents)
+    await read_xlsx_and_load_to_tables(buffer, db)
     df = pd.read_excel(buffer)
     buffer.close()
 
