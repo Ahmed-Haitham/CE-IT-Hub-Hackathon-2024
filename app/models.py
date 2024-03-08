@@ -100,7 +100,7 @@ class OneBigTable(Base):
     )
     symptom_progression = Column(Enum(ProgressionChoices), nullable=False)
     first_symptom_age_onset_group = Column(Enum(OnsetChoices), nullable=False)
-    symptom_media_path = Column(String(128))
+    symptom_media_path = Column(String(5000))
     symptom_tags = Column(ARRAY(String), nullable=False)
 
     disease_group_medical_name = Column(String(128), nullable=False)  # , unique=True
@@ -117,7 +117,7 @@ class SymptomDefinitions(Base):
     id = Column(Integer, default=None, primary_key=True)
     symptom_medical_name = Column(String(999), nullable=False, unique=True)
     symptom_description = Column(String(999))
-    symptom_media_path = Column(String(128))
+    symptom_media_path = Column(String(5000))
     symptom_tags = Column(ARRAY(String))
 
 

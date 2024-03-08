@@ -72,7 +72,7 @@ const SymptomSelection = ({ list_items, setListItems, setSelectedOptions, setSel
         }}
         renderOption={(props, option, { selected }) => {
           if (option.symptom_media_path!=null){
-            let srcPath = option.symptom_media_path.startsWith('http') ? option.symptom_media_path : `/media/${option.symptom_media_path}`;
+            let srcPath = option.symptom_media_path.startsWith('http') ? option.symptom_media_path : `/${option.symptom_media_path}`;
             return (
             <Box {...props}>
               <Tooltip sx={{ maxWidth: 0.25 }} title={

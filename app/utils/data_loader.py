@@ -58,9 +58,9 @@ async def read_xlsx_and_load_to_tables(input_file, session):
     await prepare_pseudo_symptoms_table(session, general_data, SymptomsValidationClient,
         columns_indexes_in_source_file=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16])
     await prepare_table(session, general_data, SymptomDefinitionsClient,
-        ['symptom_medical_name', 'symptom_description', 'symptom_tags'],
-            columns_indexes_in_source_file=[2,2,17],
-            columns_indexes_that_should_be_arrays=[2] #0 based index from choosen columns above
+        ['symptom_medical_name', 'symptom_description', 'symptom_media_path', 'symptom_tags'],
+            columns_indexes_in_source_file=[2,2,18,17],
+            columns_indexes_that_should_be_arrays=[3] #0 based index from choosen columns above
             )
     await prepare_table(session, general_data, DiseaseGroupDefinitionsClient,
         ['disease_group_medical_name'], columns_indexes_in_source_file=[8])
