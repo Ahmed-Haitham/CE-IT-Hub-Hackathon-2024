@@ -39,8 +39,7 @@ class SymmetricityChoices(enum.Enum):
 
     unilateral = "asymetryczny"
     bilateral = "symetryczny"
-    na = "na"
-
+    na = "N/A"
 
 class ProgressionChoices(enum.Enum):
     """
@@ -54,6 +53,10 @@ class ProgressionChoices(enum.Enum):
     stable = "stałe/postępujące"
     variable = "zmienne"
     progressing = "postępujące"
+    slow = "postępujące w ciągu lat- dekad"
+    fast = "zmienność w ciągu doby"
+    medium = "postępujące w ciągu tygodni- miesięcy"
+    regressing = "poprawa z wiekiem"
 
 
 class OnsetChoices(enum.Enum):
