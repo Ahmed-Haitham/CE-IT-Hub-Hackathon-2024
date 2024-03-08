@@ -227,25 +227,39 @@ class PredictionClient():
         onset_dict = {key: member.value for key, member in OnsetChoices.__members__.items()}
         ck_level_dict = {key: member.value for key, member in CkLevelChoices.__members__.items()}
         user_input = user_input.dict()
-        listlike_keys = {key: user_input[key] for key in ['selectedSymptoms', 'selectedProgression', 'selectedSymmetricity', 'selectedFamilyHistory']}
-        df = pd.DataFrame(listlike_keys)
-        df["selectedCk"] = user_input["selectedCk"]
-        df['selectedAgeOnset'] = user_input['selectedAgeOnset']
-        df['gender'] = 'male' if user_input['female_gender'][0] == False else 'female'
-        df['family_member'] = None
-        df['comorbosities'] = None
-        df.columns = [
-            'symptom_medical_name',
-            'symptom_progression',
-            'symptom_symmetricity',
-            'symptom_in_family_history',
-            'test_ck_level',
-            'first_symptom_age_onset_group',
-            'gender',
-            'family_member',
-            'comorbosities'
-        ]
-        return df
+        translation_dict = {'selectedActor': 'wybranyAktor',
+                'selectedSymptoms': 'nazwa objawu',
+                'selectedProgression': 'nasilenie w czasie',
+                'selectedSymmetricity': 'cechy objawu',
+                'selectedFamilyHistory': 'wywiad',
+                'selectedCk': 'poziom ck',
+                'selectedAgeOnset': 'wiek wystapienia pierwszych objawów',
+                'female_gender': 'plec'}
+        desired_keys = ['grupa objawów',
+                        'nazwa objawu',
+                        'nasilenie w czasie',
+                        'dynamika objawów',
+                        'cechy objawu',
+                        'wiek wystapienia pierwszych objawów',
+                        'wywiad rodzinny - czy w rodzinie są lub były osoby z podobnymi objawami jak u pacjenta. jeśli tak to proszę wybrac pokrewiensto',
+                        'wywiad rodzinny - czy w rodzinie do 2 pokoleń wstecz występowały poniższe objawy',
+                        'grupa chorób',
+                        'poziom ck',
+                        'objawy obligatoryjne',
+                        'objawy wykluczające',
+                        'choroby współistniejące',
+                        'podgrupa chorób',
+                        'cechy charakterystyczne i objawy współistniejące',
+                        'jednostka chorobowa']
+        desired_input = {translation_dict.get(k, k): v for k, v in user_input.items()}
+        for key in desired_input:
+            if isinstance(desired_input[key], list):
+                desired_input[key] = [desired_input[key][0]]
+            else:
+                desired_input[key] = [desired_input[key]]
+
+        desired_input = {k: desired_input[k] for k in desired_keys if k in desired_input}
+        return desired_input
     
     async def create_algorithm_input(self):
         statement = select(Base.metadata.tables[models.Symptoms.__tablename__])
