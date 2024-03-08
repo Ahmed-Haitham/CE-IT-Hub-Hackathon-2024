@@ -102,3 +102,6 @@ def predict_disease(patient_data, disease_data_dict):
         return {'grupa chorób': predicted_disease, 'podgrupa chorób': disease_data[max_index]['podgrupa chorób'], 'jednostka chorobowa': disease_data[max_index]['jednostka chorobowa'], 'probabilities': probabilities_dict_sorted}
     else:
         return {'grupa chorób': predicted_disease, 'probabilities': probabilities_dict_sorted}
+
+def parse_disease(prediction):
+    return [{"disease":k, "probability":v}for k, v in prediction['probabilities'].items()]
