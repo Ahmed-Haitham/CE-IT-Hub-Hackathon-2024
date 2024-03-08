@@ -8,6 +8,7 @@ from sqlalchemy.exc import DBAPIError
 from . import models, schemas, auth
 from .db import Base
 from .prepare_dataset import convert_long_to_dictionary
+from .prediction_algorithm import predict_disease_excl, parse_disease
 import pandas as pd
 
 class SymptomDefinitionsClient():
@@ -240,39 +241,48 @@ class PredictionClient():
             'comorbosities'
         ]
         return df
+    
+    async def create_algorithm_input(self):
+        statement = select(Base.metadata.tables[models.Symptoms.__tablename__])
+        result = await self.session.execute(statement)
+        return convert_long_to_dictionary(result.mappings().all())
 
     async def get_diagnose(self, evaluation_request: schemas.EvaluateAssessment):
         user_inputs_df = self._parse_user_input(evaluation_request)
         print(user_inputs_df.to_dict(orient='records'))
+        algorithm_input =  await self.create_algorithm_input()
+        print(algorithm_input)
+        predicted = parse_disease(predict_disease_excl(user_inputs_df, algorithm_input))
+
         #TODO: Use real algorithm to predict
-        predicted = [
-            {
-                "disease": "Parkinson's Disease",
-                "probability": 0.8,
-                "symptoms": ["jittering", "trouble speaking"],
-                "mandatory_symptoms": ["jittering"],
-                "excluding_symptoms": ["ptosis"]
-            },
-            {
-                "disease": "Multiple Sclerosis",
-                "probability": 0.1,
-                "symptoms": ["numbness", "trouble walking"],
-                "mandatory_symptoms": ["numbness"],
-                "excluding_symptoms": []
-            },
-            {
-                "disease": "Alzheimer's Disease",
-                "probability": 0.05,
-                "symptoms": ["memory loss", "trouble concentrating"],
-                "mandatory_symptoms": [],
-                "excluding_symptoms": []
-            },
-            {
-                "disease": "Huntington's Disease",
-                "probability": 0.05,
-                "symptoms": ["involuntary movements", "trouble walking"],
-                "mandatory_symptoms": [],
-                "excluding_symptoms": ["ck_over_1000"]
-            }
-        ]
+        # predicted = [
+        #     {
+        #         "disease": "Parkinson's Disease",
+        #         "probability": 0.8,
+        #         "symptoms": ["jittering", "trouble speaking"],
+        #         "mandatory_symptoms": ["jittering"],
+        #         "excluding_symptoms": ["ptosis"]
+        #     },
+        #     {
+        #         "disease": "Multiple Sclerosis",
+        #         "probability": 0.1,
+        #         "symptoms": ["numbness", "trouble walking"],
+        #         "mandatory_symptoms": ["numbness"],
+        #         "excluding_symptoms": []
+        #     },
+        #     {
+        #         "disease": "Alzheimer's Disease",
+        #         "probability": 0.05,
+        #         "symptoms": ["memory loss", "trouble concentrating"],
+        #         "mandatory_symptoms": [],
+        #         "excluding_symptoms": []
+        #     },
+        #     {
+        #         "disease": "Huntington's Disease",
+        #         "probability": 0.05,
+        #         "symptoms": ["involuntary movements", "trouble walking"],
+        #         "mandatory_symptoms": [],
+        #         "excluding_symptoms": ["ck_over_1000"]
+        #     }
+        # ]
         return [user_inputs_df.to_dict(orient='records'), predicted]
