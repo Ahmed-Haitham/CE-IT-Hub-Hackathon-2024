@@ -249,9 +249,8 @@ class PredictionClient():
 
     async def get_diagnose(self, evaluation_request: schemas.EvaluateAssessment):
         user_inputs_df = self._parse_user_input(evaluation_request)
-        print(user_inputs_df.to_dict(orient='records'))
+        # print(user_inputs_df.to_dict(orient='records'))
         algorithm_input =  await self.create_algorithm_input()
-        print(algorithm_input)
         predicted = parse_disease(predict_disease_excl(user_inputs_df, algorithm_input))
 
         #TODO: Use real algorithm to predict
