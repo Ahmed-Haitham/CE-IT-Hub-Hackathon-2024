@@ -8,7 +8,7 @@ from sqlalchemy.exc import DBAPIError
 from . import models, schemas, auth
 from .db import Base
 from .prepare_dataset import convert_long_to_dictionary
-from .prediction_algorithm import predict_disease_excl, parse_disease
+from .prediction_algorithm import predict_disease_excl, predict_disease, parse_disease
 from .models import CkLevelChoices, ProgressionChoices, SymmetricityChoices, OnsetChoices
 import pandas as pd
 
@@ -228,7 +228,7 @@ class PredictionClient():
         ck_level_dict = {key: member.value for key, member in CkLevelChoices.__members__.items()}
         user_input = user_input.dict()
         
-        translated_input = myinput.copy()
+        translated_input = user_input.copy()
         # Translate selectedSymmetricity
         translated_input["selectedSymmetricity"] = [symmetricity_dict.get(value, value) for value in translated_input["selectedSymmetricity"]]
         # Translate selectedProgression
@@ -237,9 +237,6 @@ class PredictionClient():
         translated_input["selectedAgeOnset"] = onset_dict.get(translated_input["selectedAgeOnset"], translated_input["selectedAgeOnset"])
         # Translate selectedCk
         translated_input["selectedCk"] = ck_level_dict.get(translated_input["selectedCk"], translated_input["selectedCk"])
-        # Translate selectedGender
-        if translated_input.get("female_gender"):
-            translated_input["female_gender"] = [GenderChoices.female.value if value else GenderChoices.male.value for value in translated_input["female_gender"]]
         # Translate selectedSymptoms
         translated_input["selectedSymptoms"] = [symptom for symptom in translated_input["selectedSymptoms"]]
 
@@ -276,6 +273,24 @@ class PredictionClient():
 
         desired_input = {k: desired_input[k] for k in desired_keys if k in desired_input}
         return desired_input
+
+    def _prepare_front_user_input(self, user_input):
+        user_input = user_input.dict()
+        listlike_keys = {key: user_input[key] for key in ['selectedSymptoms', 'selectedProgression', 'selectedSymmetricity', 'selectedFamilyHistory']}
+        df = pd.DataFrame(listlike_keys)
+        df["selectedCk"] = user_input["selectedCk"]
+        df['selectedAgeOnset'] = user_input['selectedAgeOnset']
+        df['gender'] = 'male' if user_input['female_gender'][0] == False else 'female'
+        df.columns = [
+            'symptom_medical_name',
+            'symptom_progression',
+            'symptom_symmetricity',
+            'symptom_in_family_history',
+            'test_ck_level',
+            'first_symptom_age_onset_group',
+            'gender',
+        ]
+        return df.to_dict(orient='records')
     
     async def create_algorithm_input(self):
         statement = select(Base.metadata.tables[models.Symptoms.__tablename__])
@@ -286,37 +301,8 @@ class PredictionClient():
         user_inputs_df = self._parse_user_input(evaluation_request)
         # print(user_inputs_df.to_dict(orient='records'))
         algorithm_input =  await self.create_algorithm_input()
-        predicted = parse_disease(predict_disease_excl(user_inputs_df, algorithm_input))
-
-        #TODO: Use real algorithm to predict
-        # predicted = [
-        #     {
-        #         "disease": "Parkinson's Disease",
-        #         "probability": 0.8,
-        #         "symptoms": ["jittering", "trouble speaking"],
-        #         "mandatory_symptoms": ["jittering"],
-        #         "excluding_symptoms": ["ptosis"]
-        #     },
-        #     {
-        #         "disease": "Multiple Sclerosis",
-        #         "probability": 0.1,
-        #         "symptoms": ["numbness", "trouble walking"],
-        #         "mandatory_symptoms": ["numbness"],
-        #         "excluding_symptoms": []
-        #     },
-        #     {
-        #         "disease": "Alzheimer's Disease",
-        #         "probability": 0.05,
-        #         "symptoms": ["memory loss", "trouble concentrating"],
-        #         "mandatory_symptoms": [],
-        #         "excluding_symptoms": []
-        #     },
-        #     {
-        #         "disease": "Huntington's Disease",
-        #         "probability": 0.05,
-        #         "symptoms": ["involuntary movements", "trouble walking"],
-        #         "mandatory_symptoms": [],
-        #         "excluding_symptoms": ["ck_over_1000"]
-        #     }
-        # ]
-        return [user_inputs_df.to_dict(orient='records'), predicted]
+        predicted = parse_disease(predict_disease(user_inputs_df, algorithm_input))
+        
+        print(f"User INputs: {user_inputs_df}")
+        return self._prepare_front_user_input(evaluation_request), predicted
+        #return [user_inputs_df.to_dict(orient='records'), predicted]

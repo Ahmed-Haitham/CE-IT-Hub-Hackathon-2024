@@ -31,8 +31,8 @@ const Predictions = () => {
               >
                 <Typography sx={{ flexGrow: 1 }}>{item.disease}</Typography>
                 <Chip 
-                  label={`${item.probability * 100}%`} 
-                  color={getChipColor(item.probability * 100)}  
+                  label={`${item.probability}%`} 
+                  color={getChipColor(item.probability)}  
                   sx={{ mr: 3 }}
                 />
               </AccordionSummary>
