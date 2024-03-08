@@ -33,6 +33,7 @@ class SymptomDefinitions(BaseModel):
     id: int
     symptom_medical_name: str
     symptom_description: str | None
+    symptom_media_path: str | None
     symptom_tags: list[str] | None
 
 
@@ -53,7 +54,6 @@ class SymptomsValidation(BaseModel):
 class Symptoms(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
     symptom_name: str
     symptom_category: str
     disease_name: str

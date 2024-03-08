@@ -8,7 +8,7 @@ from app.crud import (
     SymptomsValidationClient,
     DiseaseGroupDefinitionsClient
 )
-
+from app.prepare_dataset import convert_excel_to_long_format
 
 
 async def prepare_table(session, data, table_class, column_names: List[str],
@@ -51,6 +51,8 @@ async def read_xlsx_and_load_to_tables(input_file, session):
     """Function to read data from general sheet in excel"""
 
     general_data = pd.read_excel(input_file, sheet_name="General")
+    long_format_full_data = convert_excel_to_long_format(input_file, [1,17,18,19,20,21], ['Unnamed: 0'])
+
     # columns_indexes_in_source_file starting from 0
     # if you pass column name you have to proveide column index
     await prepare_pseudo_symptoms_table(session, general_data, SymptomsValidationClient,
@@ -62,4 +64,6 @@ async def read_xlsx_and_load_to_tables(input_file, session):
             )
     await prepare_table(session, general_data, DiseaseGroupDefinitionsClient,
         ['disease_group_medical_name'], columns_indexes_in_source_file=[8])
+    await prepare_table(session, long_format_full_data, SymptomsClient,
+        ['symptom_name', 'symptom_category', 'disease_name', 'disease_code'], columns_indexes_in_source_file=[0,1,2,3])
     

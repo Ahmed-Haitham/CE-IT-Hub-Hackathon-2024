@@ -9,7 +9,6 @@ from sqlalchemy import (
     ForeignKey,
     Integer,
     String,
-    Table,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
 
@@ -136,11 +135,7 @@ class Symptoms(Base):
     __tablename__ = "symptoms"
 
     id = Column(Integer, default=None, primary_key=True)
-    symptom_name = Column(String(999), ForeignKey("symptoms_validation.pseudo_symptom_name"), nullable=False)
+    symptom_name = Column(String(3000)) #TODO set back foreign key constraint, ForeignKey("symptoms_validation.pseudo_symptom_name"), nullable=False)
     symptom_category = Column(String(128))
     disease_name = Column(String(128))
-<<<<<<< HEAD
-    disease_code = Column(String(12))
-=======
-    disease_code = Column(String(12))
->>>>>>> ebfd5e4 (WIP)
+    disease_code = Column(String(128))

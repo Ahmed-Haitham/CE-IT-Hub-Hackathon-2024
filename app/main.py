@@ -91,6 +91,11 @@ async def post_table_entry(table_entry: schemas.BaseBigTable, dependencies=Depen
     client = BigTableClient(db)
     return await client.add_entry(table_entry)
 
+@app.get('/algorithmInput', response_model=None)
+async def algorithm_input(db: AsyncSession = Depends(get_session)):
+    client = SymptomsClient(db)
+    return await client.create_algorithm_input()
+
 @app.post('/evaluateAssessment', response_model=None)
 async def evaluate_assessment(assessment: schemas.EvaluateAssessment, db: AsyncSession = Depends(get_session)):
     #TODO: Integrate with Halyna's code to evaluate the assessment

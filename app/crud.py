@@ -7,6 +7,7 @@ from sqlalchemy.exc import DBAPIError
 
 from . import models, schemas, auth
 from .db import Base
+from .prepare_dataset import convert_long_to_dictionary
 import pandas as pd
 
 class SymptomDefinitionsClient():
@@ -95,6 +96,12 @@ class SymptomsValidationClient():
 class SymptomsClient():
     def __init__(self, session: AsyncSession):
         self.session = session
+    
+    async def create_algorithm_input(self):
+        statement = select(Base.metadata.tables[models.Symptoms.__tablename__])
+        result = await self.session.execute(statement)
+        return convert_long_to_dictionary(result.mappings().all())
+
 
     async def populate_to_table(self, data):
       
