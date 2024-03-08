@@ -19,6 +19,13 @@ def prepare_random_patient_data(disease_dict, num_diseases=1):
 
     # Select a specified number of random diseases
     random_disease_codes = random.sample(list(disease_dict.keys()), num_diseases)
+
+    # Print the randomly selected disease codes
+    print("=" * 50)
+    print("Randomly selected disease codes:")
+    for code in random_disease_codes:
+        print(code)
+        print("=" * 50)
     
     # Extract one value for each key from the randomly selected disease information
     patient_data = {}
