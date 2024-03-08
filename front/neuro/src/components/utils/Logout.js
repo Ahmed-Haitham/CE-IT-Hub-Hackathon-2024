@@ -18,7 +18,7 @@ const Logout = () => {
       <Button variant="contained" color="success" as={Link} to="/upload" style={{ textDecoration: 'none' }}>
         ADMIN PANEL
       </Button>
-      <Button variant="contained" color="warning" onClick={handleLogout} as={Link} to="/" style={{ textDecoration: 'none' }}>
+      <Button variant="contained" color="ochre" onClick={handleLogout} as={Link} to="/" style={{ textDecoration: 'none' }}>
         LOGOUT
       </Button>
     </ButtonGroup>
