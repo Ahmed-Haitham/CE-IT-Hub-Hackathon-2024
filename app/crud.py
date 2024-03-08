@@ -9,6 +9,7 @@ from . import models, schemas, auth
 from .db import Base
 from .prepare_dataset import convert_long_to_dictionary
 from .prediction_algorithm import predict_disease_excl, parse_disease
+from .models import CkLevelChoices, ProgressionChoices, SymmetricityChoices, OnsetChoices
 import pandas as pd
 
 class SymptomDefinitionsClient():
@@ -221,6 +222,10 @@ class PredictionClient():
     def __init__(self, session: AsyncSession):
         self.session = session
     def _parse_user_input(self, user_input):
+        symmetricity_dict = {key: member.value for key, member in SymmetricityChoices.__members__.items()}
+        progression_dict = {key: member.value for key, member in ProgressionChoices.__members__.items()}
+        onset_dict = {key: member.value for key, member in OnsetChoices.__members__.items()}
+        ck_level_dict = {key: member.value for key, member in CkLevelChoices.__members__.items()}
         user_input = user_input.dict()
         listlike_keys = {key: user_input[key] for key in ['selectedSymptoms', 'selectedProgression', 'selectedSymmetricity', 'selectedFamilyHistory']}
         df = pd.DataFrame(listlike_keys)
