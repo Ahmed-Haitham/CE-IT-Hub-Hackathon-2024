@@ -226,6 +226,8 @@ class PredictionClient():
         df["selectedCk"] = user_input["selectedCk"]
         df['selectedAgeOnset'] = user_input['selectedAgeOnset']
         df['gender'] = 'male' if user_input['female_gender'][0] == False else 'female'
+        df['family_member'] = None
+        df['comorbosities'] = None
         df.columns = [
             'symptom_medical_name',
             'symptom_progression',
@@ -233,7 +235,9 @@ class PredictionClient():
             'symptom_in_family_history',
             'test_ck_level',
             'first_symptom_age_onset_group',
-            'gender'
+            'gender',
+            'family_member',
+            'comorbosities'
         ]
         return df
 
