@@ -1,4 +1,5 @@
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import CloudDownloadIcon from '@mui/icons-material/CloudDownload';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { ThemeProvider, styled } from '@mui/material/styles';
@@ -70,6 +71,18 @@ export default function Upload() {
           >
             Upload diseases data
             <VisuallyHiddenInput type="file" onChange={handleFileUpload} />
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<CloudDownloadIcon />}
+          >
+            <a
+              href="/data_template.xlsx"
+              download="data_template.xlsx"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              Download Template file to fill
+            </a>
           </Button>
           { file && <p>{file.name}</p>}
         </Box>
